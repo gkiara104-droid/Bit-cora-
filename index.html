@@ -21,7 +21,7 @@
     --shadow: 0 2px 0 rgba(58,35,24,.06), 0 10px 24px -14px rgba(58,35,24,.25);
     --c1:#C1272D; --c2:#E8734A; --c3:#F2A93B; --c4:#EFC94C; --c5:#8FAE6B;
     --type-clase:#8AA6C2; --type-practica:#B98BC9; --type-trabajo:#8AA6C2;
-    --type-estudio:#E8734A; --type-examen:#C1272D; --type-otro:#C9B79C;
+    --type-estudio:#E8734A; --type-examen:#C1272D; --type-entrega:#3E7C8A; --type-otro:#C9B79C;
     --r-pill:999px; --r-card:22px;
   }
   [data-palette="red"]{ --c1:#7A1015; --c2:#9E1B22; --c3:#C1272D; --c4:#DA5A4F; --c5:#F2A08F; }
@@ -244,6 +244,12 @@
       <h2>Próximos exámenes</h2>
       <div id="examsList"></div>
     </div>
+
+    <div class="card">
+      <div class="row-between"><h2>Próximas entregas <span class="muted">prácticas, trabajos...</span></h2></div>
+      <div id="deadlinesList"></div>
+      <button class="add-subject-btn" id="btnAddDeadline">+ añadir fecha límite</button>
+    </div>
   </section>
 
   <!-- ================= TAB: HORARIO ================= -->
@@ -388,6 +394,23 @@
   </div>
 </div>
 
+<!-- MODAL: quick add deadline -->
+<div class="overlay" id="overlayDeadline">
+  <div class="modal">
+    <div class="row-between"><h3 id="deadlineModalTitle">Añadir fecha límite</h3><button class="close-x" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <label>Qué es</label>
+    <input type="text" id="dlTitle" placeholder="p.ej. Entrega práctica 3 · Automatización">
+    <div class="field-row">
+      <div><label>Fecha</label><input type="date" id="dlDate"></div>
+      <div><label>Hora límite</label><input type="time" id="dlTime" value="23:59"></div>
+    </div>
+    <label>Asignatura (opcional)</label>
+    <select id="dlSubject"><option value="">— sin asignar —</option></select>
+    <button class="primary-btn" id="btnSaveDeadline">Guardar</button>
+    <button class="danger-btn" id="btnDeleteDeadline" style="display:none">Eliminar</button>
+  </div>
+</div>
+
 <!-- MODAL: day detail / add event (from calendario tab) -->
 <div class="overlay" id="overlayDay">
   <div class="modal">
@@ -407,6 +430,7 @@
     <div class="type-pick" id="evTypePick">
       <button type="button" data-type="trabajo" style="background:var(--type-trabajo)">trabajo</button>
       <button type="button" data-type="estudio" style="background:var(--type-estudio)">estudio</button>
+      <button type="button" data-type="entrega" style="background:var(--type-entrega)">entrega</button>
       <button type="button" data-type="otro" style="background:var(--type-otro)">otro</button>
     </div>
     <button class="primary-btn" id="btnAddEvent">Añadir evento</button>
@@ -475,8 +499,8 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
     {id:"caramel", name:"Sea Salt Caramel Crunch", colors:["#B3261E","#D14A2D","#E8734A","#F2A93B","#F6C453"]},
     {id:"peachy", name:"Peachy Key Lime Pie", colors:["#E8734A","#F2A93B","#EFC94C","#B7C25A","#7E9F55"]}
   ];
-  var TYPE_COLORS = {clase:"var(--type-clase)", practica:"var(--type-practica)", trabajo:"var(--type-trabajo)", estudio:"var(--type-estudio)", examen:"var(--type-examen)", otro:"var(--type-otro)"};
-  var TYPE_LABELS = {clase:"Clase", practica:"Práctica", trabajo:"Trabajo", estudio:"Estudio", examen:"Examen", otro:"Otro"};
+  var TYPE_COLORS = {clase:"var(--type-clase)", practica:"var(--type-practica)", trabajo:"var(--type-trabajo)", estudio:"var(--type-estudio)", examen:"var(--type-examen)", entrega:"var(--type-entrega)", otro:"var(--type-otro)"};
+  var TYPE_LABELS = {clase:"Clase", practica:"Práctica", trabajo:"Trabajo", estudio:"Estudio", examen:"Examen", entrega:"Entrega", otro:"Otro"};
 
   function toast(msg){
     var t = document.getElementById("toast");
@@ -655,6 +679,61 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
     }).join("");
   }
 
+  /* ---------------- DEADLINES (entregas) ---------------- */
+  function renderDeadlines(){
+    var wrap = document.getElementById("deadlinesList");
+    var items = state.events.filter(function(e){ return e.type==="entrega" && daysBetween(e.date)>=0; })
+      .sort(function(a,b){ return (a.date+a.start).localeCompare(b.date+b.start); }).slice(0,8);
+    if(items.length===0){ wrap.innerHTML = '<div class="plan-empty">No tienes entregas próximas guardadas.</div>'; return; }
+    wrap.innerHTML = items.map(function(e){
+      var d = daysBetween(e.date);
+      return '<div class="exam-row" data-id="'+e.id+'" style="cursor:pointer;">'+
+        '<div class="exam-days" style="color:var(--type-entrega)"><b>'+d+'</b><span>días</span></div>'+
+        '<div class="exam-main"><div class="exam-name">'+e.title+'</div><div class="exam-date">'+fmtDateLong(e.date)+' · '+e.start+'</div></div></div>';
+    }).join("");
+    wrap.querySelectorAll(".exam-row").forEach(function(row){
+      row.addEventListener("click", function(){ openDeadlineModal(row.getAttribute("data-id")); });
+    });
+  }
+  var editingDeadlineId = null;
+  function fillDeadlineSubjectSelect(){
+    var sel = document.getElementById("dlSubject");
+    sel.innerHTML = '<option value="">— sin asignar —</option>' +
+      state.subjects.map(function(s){ return '<option value="'+s.id+'">'+s.name+'</option>'; }).join("");
+  }
+  function openDeadlineModal(id){
+    editingDeadlineId = id || null;
+    var e = id ? state.events.find(function(x){return x.id===id;}) : null;
+    document.getElementById("deadlineModalTitle").textContent = e ? "Editar fecha límite" : "Añadir fecha límite";
+    document.getElementById("dlTitle").value = e ? e.title : "";
+    document.getElementById("dlDate").value = e ? e.date : todayISO;
+    document.getElementById("dlTime").value = e ? e.start : "23:59";
+    fillDeadlineSubjectSelect();
+    document.getElementById("dlSubject").value = e && e.subjectId ? e.subjectId : "";
+    document.getElementById("btnDeleteDeadline").style.display = e ? "block" : "none";
+    showOverlay("overlayDeadline");
+  }
+  document.getElementById("btnAddDeadline").addEventListener("click", function(){ openDeadlineModal(null); });
+  document.getElementById("btnSaveDeadline").addEventListener("click", function(){
+    var title = document.getElementById("dlTitle").value.trim();
+    var date = document.getElementById("dlDate").value;
+    var time = document.getElementById("dlTime").value || "23:59";
+    var subjectId = document.getElementById("dlSubject").value || null;
+    if(!title || !date){ toast("Ponle título y fecha"); return; }
+    if(editingDeadlineId){
+      var e = state.events.find(function(x){return x.id===editingDeadlineId;});
+      e.title=title; e.date=date; e.start=time; e.end=time; e.subjectId=subjectId;
+    } else {
+      state.events.push({id:"dl"+Date.now(), date:date, title:title, start:time, end:time, type:"entrega", subjectId:subjectId});
+    }
+    save(); renderAll(); hideOverlay("overlayDeadline"); toast("Guardado");
+  });
+  document.getElementById("btnDeleteDeadline").addEventListener("click", function(){
+    if(!editingDeadlineId) return;
+    state.events = state.events.filter(function(x){return x.id!==editingDeadlineId;});
+    save(); renderAll(); hideOverlay("overlayDeadline"); toast("Eliminada");
+  });
+
   /* ---------------- HORARIO TAB ---------------- */
   var horarioCursor = todayISO;
   var DOW_LONG = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
@@ -686,10 +765,14 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
     var examenesHoy = evs.filter(function(e){return e.type==="examen";});
     var otros = state.events.filter(function(e){return e.date===iso;});
 
+    var deadlinesHoy = state.events.filter(function(e){ return e.date===iso && e.type==="entrega"; });
     var banner = document.getElementById("dayBanner");
     banner.innerHTML = "";
     if(examenesHoy.length){
-      banner.innerHTML = '<div class="banner exam">📌 Examen hoy: '+examenesHoy.map(function(e){return e.title;}).join(", ")+'</div>';
+      banner.innerHTML += '<div class="banner exam">📌 Examen hoy: '+examenesHoy.map(function(e){return e.title;}).join(", ")+'</div>';
+    }
+    if(deadlinesHoy.length){
+      banner.innerHTML += '<div class="banner" style="background:#DCEEF1; color:#245057;">⏳ Entrega hoy: '+deadlinesHoy.map(function(e){return e.title+' ('+e.start+')';}).join(", ")+'</div>';
     }
 
     function rowsHtml(list, emptyMsg){
@@ -1070,7 +1153,7 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
 
   /* ---------------- MASTER RENDER ---------------- */
   function renderAll(){
-    renderBeadgrid(); renderSubjects(); renderExams();
+    renderBeadgrid(); renderSubjects(); renderExams(); renderDeadlines();
     if(document.getElementById("panel-horario").classList.contains("active")) renderHorario();
     if(document.getElementById("panel-calendario").classList.contains("active")) renderCalendar();
   }
