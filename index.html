@@ -177,12 +177,13 @@
   .primary-btn{width:100%; padding:13px; border-radius:14px; border:none; background:var(--ink); color:#fff; font-weight:600; font-size:.9rem; cursor:pointer; margin-top:18px;}
   .danger-btn{width:100%; padding:11px; border-radius:14px; border:1.5px solid #C1272D; background:transparent; color:#C1272D; font-weight:600; font-size:.82rem; cursor:pointer; margin-top:10px;}
   .day-events{margin-top:4px;}
-  .day-event-row{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line);}
+  .day-event-row{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); cursor:pointer;}
   .day-event-row .del{background:none; border:none; cursor:pointer; color:var(--ink-soft);}
   .day-event-row .del svg{width:16px; height:16px;}
   .day-event-info{flex:1;}
   .day-event-info .t{font-size:.85rem; font-weight:600;}
   .day-event-info .m{font-size:.72rem; color:var(--ink-soft);}
+  .day-event-row.editing{background:var(--surface-soft); border-radius:12px; padding-left:8px; padding-right:8px;}
   .palette-opt{display:flex; align-items:center; gap:12px; padding:12px; border-radius:14px; border:1.5px solid var(--line); cursor:pointer; margin-bottom:10px;}
   .palette-opt.active{border-color:var(--ink); background:var(--surface-soft);}
   .palette-strip{display:flex; height:26px; border-radius:8px; overflow:hidden; flex:1;}
@@ -191,6 +192,11 @@
   .toast{position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:11px 20px; border-radius:var(--r-pill); font-size:.82rem; z-index:60; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
   footer.credit{text-align:center; font-size:.72rem; color:var(--ink-soft); padding:24px 0 6px;}
+  .pdf-choice-opt{display:block; width:100%; text-align:left; border:1.5px solid var(--line); background:var(--surface-soft); border-radius:14px; padding:14px; margin-top:10px; cursor:pointer;}
+  .pdf-choice-opt:first-of-type{margin-top:0;}
+  .pdf-choice-opt:hover{border-color:var(--c2);}
+  .pdf-choice-opt .pt{font-weight:600; font-size:.88rem; margin-bottom:3px;}
+  .pdf-choice-opt .pm{font-size:.76rem; color:var(--ink-soft);}
 </style>
 </head>
 <body>
@@ -417,10 +423,10 @@
     <div class="row-between"><h3 id="dayModalTitle">Día</h3><button class="close-x" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
     <div class="section-label" style="margin-top:0">Automáticas (horario)</div>
     <div class="day-events" id="dayAutoList"></div>
-    <div class="section-label">Tuyos</div>
+    <div class="section-label">Tuyos <span class="muted" style="text-transform:none; font-weight:500;">(toca uno para editarlo)</span></div>
     <div class="day-events" id="dayEventsList"></div>
 
-    <label style="margin-top:18px;">Añadir evento ese día</label>
+    <label style="margin-top:18px;" id="evFormLabel">Añadir evento ese día</label>
     <input type="text" id="evTitle" placeholder="Título (p.ej. tarde libre)">
     <div class="field-row">
       <div><label>Desde</label><input type="time" id="evStart" value="09:00"></div>
@@ -434,6 +440,23 @@
       <button type="button" data-type="otro" style="background:var(--type-otro)">otro</button>
     </div>
     <button class="primary-btn" id="btnAddEvent">Añadir evento</button>
+    <button class="danger-btn" id="btnCancelEditEvent" style="display:none">Cancelar edición</button>
+  </div>
+</div>
+
+<!-- MODAL: choose what to do with an existing schedule when importing a new PDF -->
+<div class="overlay" id="overlayPdfChoice">
+  <div class="modal">
+    <div class="row-between"><h3>Ya tenías un horario cargado</h3><button class="close-x" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="settings-desc" style="margin-bottom:0;">¿Qué quieres hacer con las clases, prácticas y exámenes que ya tenías guardados?</div>
+    <button type="button" class="pdf-choice-opt" id="pdfChoiceKeep">
+      <div class="pt">Mantener lo anterior y añadir esto</div>
+      <div class="pm">Las sesiones del horario actual se quedan tal cual, y las de este PDF se suman a mayores.</div>
+    </button>
+    <button type="button" class="pdf-choice-opt" id="pdfChoiceReplace">
+      <div class="pt">Borrar lo anterior y usar solo este PDF</div>
+      <div class="pm">Se sustituye por completo el horario que tenías por las sesiones de este nuevo PDF.</div>
+    </button>
   </div>
 </div>
 
@@ -846,19 +869,18 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
   document.getElementById("prevMonth").addEventListener("click", function(){ calCursor.setMonth(calCursor.getMonth()-1); renderCalendar(); });
   document.getElementById("nextMonth").addEventListener("click", function(){ calCursor.setMonth(calCursor.getMonth()+1); renderCalendar(); });
 
-  var dayModalISO = null; var chosenType = "estudio";
+  var dayModalISO = null; var chosenType = "estudio"; var editingDayEventId = null;
   function openDayModal(iso){
     dayModalISO = iso;
     document.getElementById("dayModalTitle").textContent = fmtDateLong(iso);
     var autoWrap = document.getElementById("dayAutoList");
     var autoEvs = eventsForDate(iso).sort(function(a,b){return a.start.localeCompare(b.start);});
     autoWrap.innerHTML = autoEvs.length ? autoEvs.map(function(e){
-      return '<div class="day-event-row"><div class="plan-dot item-dot" style="background:'+TYPE_COLORS[e.type]+'"></div>'+
+      return '<div class="day-event-row" style="cursor:default;"><div class="plan-dot item-dot" style="background:'+TYPE_COLORS[e.type]+'"></div>'+
         '<div class="day-event-info"><div class="t">'+e.title+'</div><div class="m">'+e.start+'–'+e.end+' · '+TYPE_LABELS[e.type]+'</div></div></div>';
     }).join("") : '<div class="plan-empty">Nada del horario oficial este día.</div>';
+    resetDayEventForm();
     renderDayEvents();
-    document.getElementById("evTitle").value = "";
-    chosenType = "estudio"; updateTypePickUI();
     showOverlay("overlayDay");
   }
   function renderDayEvents(){
@@ -866,17 +888,51 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
     var evs = state.events.filter(function(e){return e.date===dayModalISO;}).sort(function(a,b){return a.start.localeCompare(b.start);});
     if(evs.length===0){ wrap.innerHTML = '<div class="plan-empty">Sin eventos tuyos este día.</div>'; return; }
     wrap.innerHTML = evs.map(function(e){
-      return '<div class="day-event-row"><div class="item-dot" style="background:'+TYPE_COLORS[e.type]+'"></div>'+
+      return '<div class="day-event-row'+(editingDayEventId===e.id?' editing':'')+'" data-id="'+e.id+'"><div class="item-dot" style="background:'+TYPE_COLORS[e.type]+'"></div>'+
         '<div class="day-event-info"><div class="t">'+e.title+'</div><div class="m">'+e.start+'–'+e.end+' · '+TYPE_LABELS[e.type]+'</div></div>'+
         '<button class="del" data-id="'+e.id+'" aria-label="Eliminar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button></div>';
     }).join("");
+    wrap.querySelectorAll(".day-event-info, .item-dot").forEach(function(el){
+      el.addEventListener("click", function(){
+        var row = el.closest(".day-event-row");
+        openDayEventForEdit(row.getAttribute("data-id"));
+      });
+    });
     wrap.querySelectorAll(".del").forEach(function(btn){
-      btn.addEventListener("click", function(){
+      btn.addEventListener("click", function(ev){
+        ev.stopPropagation();
         state.events = state.events.filter(function(x){return x.id!==btn.getAttribute("data-id");});
+        if(editingDayEventId===btn.getAttribute("data-id")) resetDayEventForm();
         save(); renderDayEvents(); renderAll();
       });
     });
   }
+  function openDayEventForEdit(id){
+    var e = state.events.find(function(x){return x.id===id;});
+    if(!e) return;
+    editingDayEventId = id;
+    document.getElementById("evFormLabel").textContent = "Editando evento";
+    document.getElementById("evTitle").value = e.title;
+    document.getElementById("evStart").value = e.start;
+    document.getElementById("evEnd").value = e.end;
+    chosenType = e.type; updateTypePickUI();
+    document.getElementById("btnAddEvent").textContent = "Guardar cambios";
+    document.getElementById("btnCancelEditEvent").style.display = "block";
+    renderDayEvents();
+  }
+  function resetDayEventForm(){
+    editingDayEventId = null;
+    document.getElementById("evFormLabel").textContent = "Añadir evento ese día";
+    document.getElementById("evTitle").value = "";
+    document.getElementById("evStart").value = "09:00";
+    document.getElementById("evEnd").value = "10:00";
+    chosenType = "estudio"; updateTypePickUI();
+    document.getElementById("btnAddEvent").textContent = "Añadir evento";
+    document.getElementById("btnCancelEditEvent").style.display = "none";
+  }
+  document.getElementById("btnCancelEditEvent").addEventListener("click", function(){
+    resetDayEventForm(); renderDayEvents();
+  });
   function updateTypePickUI(){
     document.querySelectorAll("#evTypePick button").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-type")===chosenType); });
   }
@@ -888,9 +944,15 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
     if(!title){ toast("Ponle un título al evento"); return; }
     var start = document.getElementById("evStart").value || "09:00";
     var end = document.getElementById("evEnd").value || "10:00";
-    state.events.push({id:"ev"+Date.now(), date:dayModalISO, title:title, start:start, end:end, type:chosenType});
-    save(); renderDayEvents(); renderAll();
-    document.getElementById("evTitle").value = ""; toast("Evento añadido");
+    if(editingDayEventId){
+      var e = state.events.find(function(x){return x.id===editingDayEventId;});
+      if(e){ e.title=title; e.start=start; e.end=end; e.type=chosenType; }
+      save(); resetDayEventForm(); renderDayEvents(); renderAll(); toast("Evento actualizado");
+    } else {
+      state.events.push({id:"ev"+Date.now(), date:dayModalISO, title:title, start:start, end:end, type:chosenType});
+      save(); renderDayEvents(); renderAll();
+      document.getElementById("evTitle").value = ""; toast("Evento añadido");
+    }
   });
 
   /* ---------------- AJUSTES ---------------- */
@@ -1073,6 +1135,40 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
     return all;
   }
 
+  var pendingPdfEvents = null;
+
+  function applyPdfEvents(events, mode){
+    // auto-añadir asignaturas nuevas que aparezcan en el PDF y no existan aún
+    var existingNames = state.subjects.map(function(s){ return s.name.toLowerCase(); });
+    var newNames = [];
+    events.forEach(function(e){
+      if(e.type==="examen" && e.room==="") return; // "Sin clase asignada" placeholder, title still valid though
+      var key = e.title.toLowerCase();
+      if(key && existingNames.indexOf(key)===-1 && newNames.indexOf(e.title)===-1){
+        newNames.push(e.title);
+      }
+    });
+    newNames.forEach(function(name, i){
+      state.subjects.push({id:"s"+Date.now()+i, name:name, colorHex: SWATCH_COLORS[i % SWATCH_COLORS.length], target:40, done:0});
+      existingNames.push(name.toLowerCase());
+    });
+
+    if(mode==="keep"){
+      state.masterEvents = getMasterEvents().slice().concat(events);
+    } else {
+      state.masterEvents = events;
+    }
+    save();
+
+    var statusEl = document.getElementById("pdfImportStatus");
+    var examCount = events.filter(function(e){return e.type==="examen";}).length;
+    var modeMsg = mode==="keep" ? "Se ha mantenido el horario anterior y se han añadido estas sesiones nuevas." : "Se ha sustituido el horario anterior por completo.";
+    statusEl.textContent = "✓ Horario importado: "+events.length+" sesiones, "+examCount+" exámenes"+(newNames.length? ", "+newNames.length+" asignatura(s) nueva(s) añadida(s)":"")+". "+modeMsg;
+    document.getElementById("btnRestoreDefaultSchedule").style.display = "block";
+    renderAll(); renderSubjects();
+    toast("Horario actualizado desde el PDF ✓");
+  }
+
   document.getElementById("btnImportPdfTrigger").addEventListener("click", function(){
     document.getElementById("importPdfFile").click();
   });
@@ -1086,34 +1182,26 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
         statusEl.textContent = "No se ha podido leer ninguna sesión de ese PDF. Puede que el formato sea distinto al esperado.";
         return;
       }
-      state.masterEvents = events;
-      save();
-
-      // auto-añadir asignaturas nuevas que aparezcan en el PDF y no existan aún
-      var existingNames = state.subjects.map(function(s){ return s.name.toLowerCase(); });
-      var newNames = [];
-      events.forEach(function(e){
-        if(e.type==="examen" && e.room==="") return; // "Sin clase asignada" placeholder, title still valid though
-        var key = e.title.toLowerCase();
-        if(key && existingNames.indexOf(key)===-1 && newNames.indexOf(e.title)===-1){
-          newNames.push(e.title);
-        }
-      });
-      newNames.forEach(function(name, i){
-        state.subjects.push({id:"s"+Date.now()+i, name:name, colorHex: SWATCH_COLORS[i % SWATCH_COLORS.length], target:40, done:0});
-        existingNames.push(name.toLowerCase());
-      });
-      save();
-
-      var examCount = events.filter(function(e){return e.type==="examen";}).length;
-      var weeks = new Set(events.map(function(e){return e.date.slice(0,7);})).size;
-      statusEl.textContent = "✓ Horario importado: "+events.length+" sesiones, "+examCount+" exámenes"+(newNames.length? ", "+newNames.length+" asignatura(s) nueva(s) añadida(s)":"")+".";
-      document.getElementById("btnRestoreDefaultSchedule").style.display = "block";
-      renderAll(); renderSubjects();
-      toast("Horario actualizado desde el PDF ✓");
+      var hadExistingSchedule = !!(state.masterEvents && state.masterEvents.length);
+      if(hadExistingSchedule){
+        pendingPdfEvents = events;
+        statusEl.textContent = "";
+        showOverlay("overlayPdfChoice");
+      } else {
+        applyPdfEvents(events, "replace");
+      }
     }).catch(function(err){
       statusEl.textContent = "Error leyendo el PDF: " + err.message;
     });
+    ev.target.value = "";
+  });
+  document.getElementById("pdfChoiceKeep").addEventListener("click", function(){
+    if(pendingPdfEvents){ applyPdfEvents(pendingPdfEvents, "keep"); pendingPdfEvents = null; }
+    hideOverlay("overlayPdfChoice");
+  });
+  document.getElementById("pdfChoiceReplace").addEventListener("click", function(){
+    if(pendingPdfEvents){ applyPdfEvents(pendingPdfEvents, "replace"); pendingPdfEvents = null; }
+    hideOverlay("overlayPdfChoice");
   });
   document.getElementById("btnRestoreDefaultSchedule").addEventListener("click", function(){
     delete state.masterEvents;
