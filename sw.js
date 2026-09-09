@@ -1,5 +1,5 @@
 // Service worker de Bitácora — cachea lo esencial para que la app abra sin conexión.
-var CACHE_NAME = "bitacora-cache-v9";
+var CACHE_NAME = "bitacora-cache-v10";
 var ASSETS = [
   "./index.html",
   "./manifest.json",
