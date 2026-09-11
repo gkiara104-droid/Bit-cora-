@@ -521,6 +521,7 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
       dailyStudyMin: 240,
       masterOverrides: {},
       studyMinutesByDay: {},
+      sessionLog: [],
       coordinator: {name:"Alberto Egea", email:"alberto.egea@upct.es"},
       subjectExtra: {
         s1: {teacher:{name:TEACHER_DEFAULTS.s1.name, email:TEACHER_DEFAULTS.s1.email, office:"", notes:""}, criteria:[]},
@@ -560,6 +561,13 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
       if(!d.dailyStudyMin) d.dailyStudyMin = 240;
       if(!d.masterOverrides) d.masterOverrides = {};
       if(!d.studyMinutesByDay) d.studyMinutesByDay = {};
+      if(!d.sessionLog){
+        d.sessionLog = [];
+        Object.keys(d.studyMinutesByDay).forEach(function(iso){
+          var m = d.studyMinutesByDay[iso];
+          if(m>0) d.sessionLog.push({id:"migrated_"+iso, subjectId:"__manual__", minutes:m, date:iso});
+        });
+      }
       if(d.coordinator === undefined) d.coordinator = {name:"Alberto Egea", email:"alberto.egea@upct.es"};
       if(!d.subjectExtra) d.subjectExtra = {};
       d.subjects.forEach(function(s){
@@ -615,6 +623,39 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
     return Math.round((d2-d1)/86400000);
   }
   function subjectById(id){ return state.subjects.find(function(s){return s.id===id;}); }
+
+  /* ---------------- SESSION LEDGER (aditivo, apto para varios dispositivos) ---------------- */
+  function sessionTotals(){
+    var bySubj = {}, byDate = {};
+    (state.sessionLog||[]).forEach(function(e){
+      bySubj[e.subjectId] = (bySubj[e.subjectId]||0) + e.minutes;
+      byDate[e.date] = (byDate[e.date]||0) + e.minutes;
+    });
+    return {bySubj:bySubj, byDate:byDate};
+  }
+  function subjectDoneHours(s){
+    var t = sessionTotals();
+    return Math.round(((s.done||0) + (t.bySubj[s.id]||0)/60)*10)/10;
+  }
+  function logStudySession(subjectId, mins, dateISO){
+    if(syncConfig && supabaseClient){
+      supabaseClient.from("bitacora_sessions").insert({room_code: syncConfig.room, subject_id: subjectId, minutes: mins, occurred_on: dateISO})
+        .then(function(res){
+          if(res.error){ toast("No se pudo guardar en la nube: " + res.error.message); return; }
+          pullSessions();
+        });
+    } else {
+      state.sessionLog = state.sessionLog || [];
+      state.sessionLog.push({id:"local_"+Date.now()+"_"+Math.random().toString(36).slice(2,6), subjectId:subjectId, minutes:mins, date:dateISO});
+      save(); renderAll();
+    }
+  }
+  function setManualDayTotal(iso, desiredTotal){
+    var currentDayTotal = sessionTotals().byDate[iso] || 0;
+    var delta = desiredTotal - currentDayTotal;
+    if(Math.abs(delta) < 0.01) return;
+    logStudySession("__manual__", delta, iso);
+  }
 
   function effectiveGroup(subjectId){
     if(state.subjectGroups && state.subjectGroups[subjectId]) return state.subjectGroups[subjectId];
@@ -673,10 +714,11 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
   var STREAK_STAR_MIN = 360; // 6h
   function computeStreak(){
     var count = 0;
+    var byDate = sessionTotals().byDate;
     var d = new Date(todayISO+"T00:00:00");
     while(true){
       var iso = d.toISOString().slice(0,10);
-      if(state.studyMinutesByDay[iso] && state.studyMinutesByDay[iso] > 0){ count++; d.setDate(d.getDate()-1); } else break;
+      if(byDate[iso] && byDate[iso] > 0){ count++; d.setDate(d.getDate()-1); } else break;
     }
     return count;
   }
@@ -697,11 +739,12 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
     var startOffset = (firstDay.getDay()+6)%7;
     var daysInMonth = new Date(year, month+1, 0).getDate();
     var todayDate = new Date(todayISO+"T00:00:00");
+    var byDate = sessionTotals().byDate;
     for(var i=0;i<startOffset;i++){ var empty=document.createElement("div"); empty.className="streak-cell empty"; grid.appendChild(empty); }
     for(var day=1; day<=daysInMonth; day++){
       var iso = year+"-"+String(month+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");
       var dt = new Date(year, month, day);
-      var mins = state.studyMinutesByDay[iso] || 0;
+      var mins = byDate[iso] || 0;
       var btn = document.createElement("button");
       btn.className = "streak-cell";
       btn.setAttribute("aria-label", iso);
@@ -722,19 +765,19 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
   function openStreakDayModal(iso){
     streakDayISO = iso;
     document.getElementById("streakDayTitle").textContent = fmtDateLong(iso);
-    document.getElementById("streakDayMinutes").value = state.studyMinutesByDay[iso] || 0;
+    document.getElementById("streakDayMinutes").value = sessionTotals().byDate[iso] || 0;
     showOverlay("overlayStreakDay");
   }
   document.getElementById("btnSaveStreakDay").addEventListener("click", function(){
     if(!streakDayISO) return;
     var mins = parseFloat(document.getElementById("streakDayMinutes").value)||0;
-    if(mins>0) state.studyMinutesByDay[streakDayISO] = mins; else delete state.studyMinutesByDay[streakDayISO];
-    save(); renderAll(); hideOverlay("overlayStreakDay"); toast("Actualizado ✓");
+    setManualDayTotal(streakDayISO, mins);
+    hideOverlay("overlayStreakDay"); toast("Actualizado ✓");
   });
   document.getElementById("btnClearStreakDay").addEventListener("click", function(){
     if(!streakDayISO) return;
-    delete state.studyMinutesByDay[streakDayISO];
-    save(); renderAll(); hideOverlay("overlayStreakDay"); toast("Puesto a cero");
+    setManualDayTotal(streakDayISO, 0);
+    hideOverlay("overlayStreakDay"); toast("Puesto a cero");
   });
 
   /* ---------------- SUBJECTS ---------------- */
@@ -743,13 +786,14 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
     var wrap = document.getElementById("subjectsList");
     wrap.innerHTML = "";
     state.subjects.forEach(function(s){
-      var pct = s.target>0 ? Math.min(100, Math.round(s.done/s.target*100)) : 0;
+      var doneHours = subjectDoneHours(s);
+      var pct = s.target>0 ? Math.min(100, Math.round(doneHours/s.target*100)) : 0;
       var el = document.createElement("div");
       el.className = "subject";
       el.innerHTML =
         '<div class="subj-dot" style="background:'+s.colorHex+'">'+s.name.slice(0,1)+'</div>'+
         '<div class="subj-main">'+
-          '<div class="subj-name-row"><span class="subj-name">'+s.name+'</span><span class="subj-hours">'+s.done+'h / '+s.target+'h</span></div>'+
+          '<div class="subj-name-row"><span class="subj-name">'+s.name+'</span><span class="subj-hours">'+doneHours+'h / '+s.target+'h</span></div>'+
           '<div class="beadbar"><div class="seg"><i style="width:'+pct+'%; background:'+s.colorHex+'"></i></div></div>'+
         '</div>'+
         '<button class="subj-edit-btn" data-id="'+s.id+'" aria-label="Editar '+s.name+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button>';
@@ -768,7 +812,7 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
     document.getElementById("subjModalTitle").textContent = s ? "Editar asignatura" : "Añadir asignatura";
     document.getElementById("subjName").value = s ? s.name : "";
     document.getElementById("subjTarget").value = s ? s.target : 60;
-    document.getElementById("subjDone").value = s ? s.done : 0;
+    document.getElementById("subjDone").value = s ? subjectDoneHours(s) : 0;
     document.getElementById("btnDeleteSubject").style.display = s ? "block" : "none";
     var sw = document.getElementById("subjSwatches"); sw.innerHTML = "";
     var chosen = s ? s.colorHex : SWATCH_COLORS[0];
@@ -789,14 +833,16 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
     var name = document.getElementById("subjName").value.trim();
     if(!name){ toast("Ponle un nombre a la asignatura"); return; }
     var target = parseFloat(document.getElementById("subjTarget").value)||0;
-    var done = parseFloat(document.getElementById("subjDone").value)||0;
+    var enteredDone = parseFloat(document.getElementById("subjDone").value)||0;
     var activeSwatch = document.querySelector("#subjSwatches .swatch.active");
     var colorHex = activeSwatch ? activeSwatch.getAttribute("data-color") : SWATCH_COLORS[0];
     if(editingSubjectId){
       var s = subjectById(editingSubjectId);
-      s.name=name; s.target=target; s.done=done; s.colorHex=colorHex;
+      var sessionHours = (sessionTotals().bySubj[s.id]||0)/60;
+      s.name=name; s.target=target; s.colorHex=colorHex;
+      s.done = Math.round((enteredDone - sessionHours)*10)/10;
     } else {
-      state.subjects.push({id:"s"+Date.now(), name:name, colorHex:colorHex, target:target, done:done});
+      state.subjects.push({id:"s"+Date.now(), name:name, colorHex:colorHex, target:target, done:enteredDone});
     }
     save(); renderAll(); hideOverlay("overlaySubject"); toast("Guardado");
   });
@@ -812,10 +858,8 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
     var id = document.getElementById("logSubject").value;
     var mins = parseFloat(document.getElementById("logMinutes").value)||0;
     if(mins<=0){ toast("Pon los minutos de la sesión"); return; }
-    var s = subjectById(id);
-    if(s) s.done = Math.round((s.done + mins/60)*10)/10;
-    state.studyMinutesByDay[todayISO] = (state.studyMinutesByDay[todayISO]||0) + mins;
-    save(); renderAll(); hideOverlay("overlayLog"); toast("Sesión registrada ✓");
+    logStudySession(id, mins, todayISO);
+    hideOverlay("overlayLog"); toast("Sesión registrada ✓");
   });
 
   /* ---------------- EXAMS (inicio tab) ---------------- */
@@ -894,12 +938,12 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
     var isFiesta = state.events.some(function(e){ return e.date===dateISO && /fiesta/i.test(e.title); });
     var examToday = getEffectiveMasterEvents().some(function(e){ return e.date===dateISO && e.type==="examen" && (e.group===null||e.group===effectiveGroup(e.subject)); });
     if(isFiesta) return {mode:"fiesta"};
-    var pending = state.subjects.filter(function(s){ return (s.target-s.done) > 0; });
+    var pending = state.subjects.filter(function(s){ return (s.target-subjectDoneHours(s)) > 0; });
     if(pending.length===0) return {mode:"done"};
     var totalWeight = pending.reduce(function(a,s){return a+s.target;},0);
     var rows = pending.map(function(s){
       var raw = state.dailyStudyMin * (s.target/totalWeight);
-      var cap = (s.target-s.done)*60;
+      var cap = (s.target-subjectDoneHours(s))*60;
       var mins = Math.round(Math.min(raw, cap));
       return {subject:s, minutes:mins};
     }).filter(function(r){return r.minutes>0;}).sort(function(a,b){return b.minutes-a.minutes;});
@@ -1536,6 +1580,7 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
   var syncConfig = null;
   var supabaseClient = null;
   var syncChannel = null;
+  var sessionsChannel = null;
   var syncPushTimer = null;
   var applyingRemote = false;
 
@@ -1573,6 +1618,8 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
       document.getElementById("btnSyncDisconnect").style.display = "block";
       pullRemoteState();
       subscribeSync();
+      pullSessions();
+      subscribeSessions();
     }).catch(function(){
       setSyncStatus("No se pudo cargar la librería de Supabase. Revisa tu conexión.");
     });
@@ -1593,6 +1640,7 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
             save(false);
             applyStateAndRender();
             applyingRemote = false;
+            pullSessions();
           }
           setSyncStatus("Sincronizado ✓ (" + new Date(remoteUpdated).toLocaleString("es-ES") + ")");
         } else {
@@ -1625,11 +1673,32 @@ var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Aut
         save(false);
         applyStateAndRender();
         applyingRemote = false;
+        pullSessions();
         setSyncStatus("Actualizado desde otro dispositivo ✓");
       })
       .subscribe();
   }
 
+  function pullSessions(){
+    if(!supabaseClient) return;
+    supabaseClient.from("bitacora_sessions").select("*").eq("room_code", syncConfig.room).order("created_at", {ascending:true})
+      .then(function(res){
+        if(res.error){ setSyncStatus("Error al leer sesiones: " + res.error.message); return; }
+        state.sessionLog = (res.data||[]).map(function(r){
+          return {id:"srv_"+r.id, subjectId:r.subject_id, minutes:Number(r.minutes), date:r.occurred_on};
+        });
+        save(false);
+        renderAll();
+      });
+  }
+  function subscribeSessions(){
+    if(sessionsChannel && supabaseClient) supabaseClient.removeChannel(sessionsChannel);
+    sessionsChannel = supabaseClient.channel("bitacora_sessions_" + syncConfig.room)
+      .on("postgres_changes", {event: "INSERT", schema: "public", table: "bitacora_sessions", filter: "room_code=eq." + syncConfig.room}, function(){
+        pullSessions();
+      })
+      .subscribe();
+  }
   var _baseSave = save;
   save = function(shouldPush){
     _baseSave();
