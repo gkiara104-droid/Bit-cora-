@@ -495,6 +495,1762 @@
   </div>
 </div>
 
+<!-- MODAL: choose device vs cloud data on first sync connect -->
+<div class="overlay" id="overlaySyncChoice">
+  <div class="modal">
+    <div class="row-between"><h3>Ya hay datos con este código</h3><button class="close-x" id="btnSyncChoiceClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="settings-desc" style="margin-bottom:16px;">Ya había datos guardados en la nube con ese código. Elige cuáles quieres conservar — los otros se sustituirán.</div>
+    <button type="button" class="primary-btn" id="btnSyncUseDevice" style="margin-top:0;">📱 Usar los datos de este dispositivo</button>
+    <div class="settings-desc" style="margin:6px 0 16px;">Lo que había en la nube con ese código se sobrescribirá con lo de aquí.</div>
+    <button type="button" class="primary-btn" id="btnSyncUseCloud" style="margin-top:0;">☁️ Usar los datos de la nube</button>
+    <div class="settings-desc" style="margin:6px 0 0;">Lo que tienes en este dispositivo se sustituirá por lo que ya había guardado con ese código.</div>
+  </div>
+</div>
+
+<script>
+var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto2", "date": "2026-09-07", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto3", "date": "2026-09-08", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto4", "date": "2026-09-08", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto5", "date": "2026-09-09", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto6", "date": "2026-09-09", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto7", "date": "2026-09-10", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto8", "date": "2026-09-10", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto9", "date": "2026-09-11", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto10", "date": "2026-09-11", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto11", "date": "2026-09-14", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto12", "date": "2026-09-14", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto13", "date": "2026-09-14", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto14", "date": "2026-09-15", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto15", "date": "2026-09-15", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto16", "date": "2026-09-15", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto17", "date": "2026-09-16", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto18", "date": "2026-09-16", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto19", "date": "2026-09-16", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto20", "date": "2026-09-17", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto21", "date": "2026-09-17", "title": "Ingeniería Térmica", "start": "11:10", "end": "14:00", "type": "practica", "group": "1", "subject": "s1", "room": "LAB"}, {"id": "auto22", "date": "2026-09-18", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto23", "date": "2026-09-18", "title": "Ingeniería Térmica", "start": "11:10", "end": "14:00", "type": "practica", "group": "2", "subject": "s1", "room": "LAB"}, {"id": "auto24", "date": "2026-09-21", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto25", "date": "2026-09-21", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto26", "date": "2026-09-21", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto27", "date": "2026-09-22", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto28", "date": "2026-09-22", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto29", "date": "2026-09-22", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto30", "date": "2026-09-23", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto31", "date": "2026-09-23", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto32", "date": "2026-09-23", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto33", "date": "2026-09-28", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto34", "date": "2026-09-28", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto35", "date": "2026-09-28", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto36", "date": "2026-09-29", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto37", "date": "2026-09-29", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto38", "date": "2026-09-29", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto39", "date": "2026-09-30", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto40", "date": "2026-09-30", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto41", "date": "2026-09-30", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto42", "date": "2026-10-01", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto43", "date": "2026-10-01", "title": "Ingeniería Térmica", "start": "11:10", "end": "14:00", "type": "practica", "group": "3", "subject": "s1", "room": "LAB"}, {"id": "auto44", "date": "2026-10-02", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto45", "date": "2026-10-02", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto46", "date": "2026-10-02", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto47", "date": "2026-10-05", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto48", "date": "2026-10-05", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto49", "date": "2026-10-05", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto50", "date": "2026-10-05", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s3", "room": "INF"}, {"id": "auto51", "date": "2026-10-06", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto52", "date": "2026-10-06", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto53", "date": "2026-10-06", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto54", "date": "2026-10-06", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s3", "room": "INF"}, {"id": "auto55", "date": "2026-10-06", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto56", "date": "2026-10-07", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto57", "date": "2026-10-07", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "examen", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto58", "date": "2026-10-07", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto59", "date": "2026-10-07", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s3", "room": "INF"}, {"id": "auto60", "date": "2026-10-07", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto61", "date": "2026-10-08", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto62", "date": "2026-10-08", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto63", "date": "2026-10-08", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto64", "date": "2026-10-13", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto65", "date": "2026-10-13", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto66", "date": "2026-10-13", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto67", "date": "2026-10-13", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s1", "room": "INF"}, {"id": "auto68", "date": "2026-10-13", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto69", "date": "2026-10-14", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto70", "date": "2026-10-14", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto71", "date": "2026-10-14", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto72", "date": "2026-10-14", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s1", "room": "INF"}, {"id": "auto73", "date": "2026-10-14", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto74", "date": "2026-10-15", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto75", "date": "2026-10-15", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto76", "date": "2026-10-15", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto77", "date": "2026-10-15", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s1", "room": "INF"}, {"id": "auto78", "date": "2026-10-16", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto79", "date": "2026-10-16", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto80", "date": "2026-10-19", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto81", "date": "2026-10-19", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto82", "date": "2026-10-19", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto83", "date": "2026-10-19", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "LAB"}, {"id": "auto84", "date": "2026-10-20", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto85", "date": "2026-10-20", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto86", "date": "2026-10-20", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto87", "date": "2026-10-20", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "LAB"}, {"id": "auto88", "date": "2026-10-21", "title": "Ingeniería Térmica", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto89", "date": "2026-10-21", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto90", "date": "2026-10-21", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto91", "date": "2026-10-21", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto92", "date": "2026-10-21", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto93", "date": "2026-10-22", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto94", "date": "2026-10-22", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto95", "date": "2026-10-22", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s1", "room": "INF"}, {"id": "auto96", "date": "2026-10-22", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s3", "room": "INF"}, {"id": "auto97", "date": "2026-10-23", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "practica", "group": "3", "subject": "s3", "room": "INF"}, {"id": "auto98", "date": "2026-10-23", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto99", "date": "2026-10-23", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s1", "room": "INF"}, {"id": "auto100", "date": "2026-10-23", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s3", "room": "INF"}, {"id": "auto101", "date": "2026-10-26", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto102", "date": "2026-10-26", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto103", "date": "2026-10-26", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto104", "date": "2026-10-26", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "LAB"}, {"id": "auto105", "date": "2026-10-26", "title": "Tecnología de Máquinas", "start": "16:00", "end": "19:00", "type": "examen", "group": null, "subject": "s3", "room": ""}, {"id": "auto106", "date": "2026-10-27", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto107", "date": "2026-10-27", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto108", "date": "2026-10-27", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto109", "date": "2026-10-27", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "LAB"}, {"id": "auto110", "date": "2026-10-27", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto111", "date": "2026-10-28", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto112", "date": "2026-10-28", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto113", "date": "2026-10-28", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto114", "date": "2026-10-28", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto115", "date": "2026-10-28", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto116", "date": "2026-10-29", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto117", "date": "2026-10-29", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto118", "date": "2026-10-29", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto119", "date": "2026-10-30", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto120", "date": "2026-10-30", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto121", "date": "2026-10-30", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s1", "room": "INF"}, {"id": "auto122", "date": "2026-10-30", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s3", "room": "INF"}, {"id": "auto123", "date": "2026-11-02", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto124", "date": "2026-11-02", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto125", "date": "2026-11-02", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto126", "date": "2026-11-02", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "LAB"}, {"id": "auto127", "date": "2026-11-03", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "examen", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto128", "date": "2026-11-03", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto129", "date": "2026-11-03", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto130", "date": "2026-11-03", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "LAB"}, {"id": "auto131", "date": "2026-11-03", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto132", "date": "2026-11-04", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto133", "date": "2026-11-04", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto134", "date": "2026-11-04", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto135", "date": "2026-11-04", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto136", "date": "2026-11-04", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto137", "date": "2026-11-05", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto138", "date": "2026-11-05", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto139", "date": "2026-11-05", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s3", "room": "INF"}, {"id": "auto140", "date": "2026-11-06", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto141", "date": "2026-11-06", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto142", "date": "2026-11-06", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto143", "date": "2026-11-06", "title": "Ingeniería Térmica", "start": "16:00", "end": "18:00", "type": "examen", "group": null, "subject": "s1", "room": ""}, {"id": "auto144", "date": "2026-11-09", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto145", "date": "2026-11-09", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto146", "date": "2026-11-09", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto147", "date": "2026-11-09", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "LAB"}, {"id": "auto148", "date": "2026-11-10", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto149", "date": "2026-11-10", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto150", "date": "2026-11-10", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto151", "date": "2026-11-10", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "LAB"}, {"id": "auto152", "date": "2026-11-11", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto153", "date": "2026-11-11", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto154", "date": "2026-11-11", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto155", "date": "2026-11-11", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto156", "date": "2026-11-11", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto157", "date": "2026-11-12", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto158", "date": "2026-11-12", "title": "Ingeniería Térmica", "start": "11:10", "end": "14:00", "type": "practica", "group": "1", "subject": "s1", "room": "LAB"}, {"id": "auto159", "date": "2026-11-13", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto160", "date": "2026-11-13", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto161", "date": "2026-11-13", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s1", "room": "INF"}, {"id": "auto162", "date": "2026-11-13", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s3", "room": "INF"}, {"id": "auto163", "date": "2026-11-16", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto164", "date": "2026-11-16", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto165", "date": "2026-11-16", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto166", "date": "2026-11-16", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "LAB"}, {"id": "auto167", "date": "2026-11-17", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto168", "date": "2026-11-17", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto169", "date": "2026-11-17", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto170", "date": "2026-11-17", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "LAB"}, {"id": "auto171", "date": "2026-11-18", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto172", "date": "2026-11-18", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto173", "date": "2026-11-18", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto174", "date": "2026-11-18", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto175", "date": "2026-11-18", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto176", "date": "2026-11-19", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto177", "date": "2026-11-19", "title": "Ingeniería Térmica", "start": "11:10", "end": "14:00", "type": "practica", "group": "3", "subject": "s1", "room": "LAB"}, {"id": "auto178", "date": "2026-11-20", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto179", "date": "2026-11-20", "title": "Ingeniería Térmica", "start": "11:10", "end": "14:00", "type": "practica", "group": "2", "subject": "s1", "room": "LAB"}, {"id": "auto180", "date": "2026-11-23", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto181", "date": "2026-11-23", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto182", "date": "2026-11-23", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto183", "date": "2026-11-23", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "LAB"}, {"id": "auto184", "date": "2026-11-24", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto185", "date": "2026-11-24", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "2", "subject": "s2", "room": "INF"}, {"id": "auto186", "date": "2026-11-24", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto187", "date": "2026-11-24", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "LAB"}, {"id": "auto188", "date": "2026-11-25", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto189", "date": "2026-11-25", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto190", "date": "2026-11-25", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto191", "date": "2026-11-25", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto192", "date": "2026-11-26", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto193", "date": "2026-11-26", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto194", "date": "2026-11-27", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto195", "date": "2026-11-27", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto196", "date": "2026-11-30", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto197", "date": "2026-11-30", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto198", "date": "2026-11-30", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto199", "date": "2026-11-30", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "INF"}, {"id": "auto200", "date": "2026-12-01", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s2", "room": "INF"}, {"id": "auto201", "date": "2026-12-01", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto202", "date": "2026-12-01", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "INF"}, {"id": "auto203", "date": "2026-12-01", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto204", "date": "2026-12-02", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto205", "date": "2026-12-02", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto206", "date": "2026-12-02", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto207", "date": "2026-12-02", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto208", "date": "2026-12-02", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto209", "date": "2026-12-03", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto210", "date": "2026-12-03", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto211", "date": "2026-12-03", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto212", "date": "2026-12-04", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto213", "date": "2026-12-04", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto214", "date": "2026-12-04", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s1", "room": "INF"}, {"id": "auto215", "date": "2026-12-09", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "practica", "group": "2", "subject": "s2", "room": "INF"}, {"id": "auto216", "date": "2026-12-09", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "examen", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto217", "date": "2026-12-09", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto218", "date": "2026-12-09", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "examen", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto219", "date": "2026-12-09", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "INF"}, {"id": "auto220", "date": "2026-12-10", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto221", "date": "2026-12-10", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "examen", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto222", "date": "2026-12-10", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "examen", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto223", "date": "2026-12-10", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "INF"}, {"id": "auto224", "date": "2026-12-11", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto225", "date": "2026-12-11", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto226", "date": "2026-12-11", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "INF"}, {"id": "auto227", "date": "2026-12-14", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto228", "date": "2026-12-14", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto229", "date": "2026-12-14", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto230", "date": "2026-12-15", "title": "Ingeniería Térmica", "start": "09:00", "end": "10:50", "type": "practica", "group": "2", "subject": "s1", "room": "INF"}, {"id": "auto231", "date": "2026-12-15", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto232", "date": "2026-12-15", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s1", "room": "INF"}, {"id": "auto233", "date": "2026-12-15", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto234", "date": "2026-12-16", "title": "Ingeniería Térmica", "start": "09:00", "end": "10:50", "type": "practica", "group": "3", "subject": "s1", "room": "INF"}, {"id": "auto235", "date": "2026-12-16", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s1", "room": "INF"}, {"id": "auto236", "date": "2026-12-16", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto237", "date": "2026-12-16", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto238", "date": "2026-12-17", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "examen", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto239", "date": "2026-12-17", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto240", "date": "2026-12-22", "title": "Ingeniería Térmica", "start": "09:00", "end": "10:50", "type": "examen", "group": null, "subject": "s1", "room": "ETSII#PS13"}];
+</script>
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "bitacoraAppData_v2";
+  var todayISO = new Date().toISOString().slice(0,10);
+
+  var TEACHER_DEFAULTS = {
+    s1: {name:"Hernández Grau, José", email:"jh.grau@upct.es"},
+    s2: {name:"Martínez Mateo, Isidoro José", email:"isidoro.martinez@upct.es"},
+    s3: {name:"González Pérez, Ignacio", email:"ignacio.gonzalez@upct.es"},
+    s4: {name:"Torres Sánchez, Roque", email:"roque.torres@upct.es"},
+    s5: {name:"Faura Mateu, Felix", email:"felix.faura@upct.es"}
+  };
+
+  function defaultData(){
+    return {
+      palette: "spectrum",
+      group: "1",
+      subjectGroups: {},
+      dailyStudyMin: 240,
+      masterOverrides: {},
+      studyMinutesByDay: {},
+      sessionLog: [],
+      coordinator: {name:"Alberto Egea", email:"alberto.egea@upct.es"},
+      subjectExtra: {
+        s1: {teacher:{name:TEACHER_DEFAULTS.s1.name, email:TEACHER_DEFAULTS.s1.email, office:"", notes:""}, criteria:[]},
+        s2: {teacher:{name:TEACHER_DEFAULTS.s2.name, email:TEACHER_DEFAULTS.s2.email, office:"", notes:""}, criteria:[]},
+        s3: {teacher:{name:TEACHER_DEFAULTS.s3.name, email:TEACHER_DEFAULTS.s3.email, office:"", notes:""}, criteria:[]},
+        s4: {teacher:{name:TEACHER_DEFAULTS.s4.name, email:TEACHER_DEFAULTS.s4.email, office:"", notes:""}, criteria:[]},
+        s5: {teacher:{name:TEACHER_DEFAULTS.s5.name, email:TEACHER_DEFAULTS.s5.email, office:"", notes:""}, criteria:[]}
+      },
+      subjects: [
+        {id:"s1", name:"Ingeniería Térmica", colorHex:"#C1272D", target:81, done:0},
+        {id:"s2", name:"Tecnología de Materiales", colorHex:"#E8734A", target:69, done:0},
+        {id:"s3", name:"Tecnología de Máquinas", colorHex:"#F2A93B", target:60, done:0},
+        {id:"s4", name:"Automatización Industrial", colorHex:"#EFC94C", target:51, done:0},
+        {id:"s5", name:"Tecnología de Fabricación", colorHex:"#8FAE6B", target:39, done:0}
+      ],
+      events: [
+        {id:"f1", date:"2026-09-17", title:"Fiestas del pueblo — sin estudio", start:"00:00", end:"23:59", type:"otro"},
+        {id:"f2", date:"2026-09-27", title:"Fin de fiestas", start:"00:00", end:"23:59", type:"otro"}
+      ],
+      streak: {}
+    };
+  }
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return defaultData();
+      var d = JSON.parse(raw);
+      if(!d.subjects || !d.events) return defaultData();
+      if(!d.group) d.group = "1";
+      if(!d.subjectGroups) d.subjectGroups = {};
+      if(d.fabricacionGroup4){
+        var fabSubj = d.subjects.find(function(s){ return /fabricaci/i.test(s.name); });
+        if(fabSubj && !d.subjectGroups[fabSubj.id]) d.subjectGroups[fabSubj.id] = "4";
+      }
+      delete d.fabricacionGroup4;
+      if(!d.dailyStudyMin) d.dailyStudyMin = 240;
+      if(!d.masterOverrides) d.masterOverrides = {};
+      if(!d.studyMinutesByDay) d.studyMinutesByDay = {};
+      if(!d.sessionLog){
+        d.sessionLog = [];
+        Object.keys(d.studyMinutesByDay).forEach(function(iso){
+          var m = d.studyMinutesByDay[iso];
+          if(m>0) d.sessionLog.push({id:"migrated_"+iso, subjectId:"__manual__", minutes:m, date:iso});
+        });
+      }
+      if(d.coordinator === undefined) d.coordinator = {name:"Alberto Egea", email:"alberto.egea@upct.es"};
+      if(!d.subjectExtra) d.subjectExtra = {};
+      d.subjects.forEach(function(s){
+        if(!d.subjectExtra[s.id]) d.subjectExtra[s.id] = {teacher:{name:"",email:"",office:"",notes:""}, criteria:[]};
+        var t = d.subjectExtra[s.id].teacher || (d.subjectExtra[s.id].teacher = {name:"",email:"",office:"",notes:""});
+        if(!t.email && TEACHER_DEFAULTS[s.id]){ t.name = TEACHER_DEFAULTS[s.id].name; t.email = TEACHER_DEFAULTS[s.id].email; }
+        if(!d.subjectExtra[s.id].criteria) d.subjectExtra[s.id].criteria = [];
+      });
+      return d;
+    }catch(e){ return defaultData(); }
+  }
+  function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+  var state = load();
+  document.documentElement.setAttribute("data-palette", state.palette);
+  document.body.setAttribute("data-palette", state.palette);
+
+  function getMasterEvents(){
+    return (state.masterEvents && state.masterEvents.length) ? state.masterEvents : DEFAULT_MASTER_EVENTS;
+  }
+  function getEffectiveMasterEvents(){
+    var overrides = state.masterOverrides || {};
+    var out = [];
+    getMasterEvents().forEach(function(e){
+      var o = overrides[e.id];
+      if(o && o.deleted) return;
+      out.push(o ? Object.assign({}, e, o) : e);
+    });
+    return out;
+  }
+
+  var PALETTES = [
+    {id:"spectrum", name:"Espectro completo", colors:["#C1272D","#E8734A","#F2A93B","#EFC94C","#8FAE6B"]},
+    {id:"red", name:"Red-iculous Velvet", colors:["#7A1015","#9E1B22","#C1272D","#DA5A4F","#F2A08F"]},
+    {id:"carrot", name:"Carrot Walnut Marble", colors:["#5C1B22","#8C2A2E","#C1372B","#E8734A","#F2B15C"]},
+    {id:"caramel", name:"Sea Salt Caramel Crunch", colors:["#B3261E","#D14A2D","#E8734A","#F2A93B","#F6C453"]},
+    {id:"peachy", name:"Peachy Key Lime Pie", colors:["#E8734A","#F2A93B","#EFC94C","#B7C25A","#7E9F55"]}
+  ];
+  var TYPE_COLORS = {clase:"var(--type-clase)", practica:"var(--type-practica)", trabajo:"var(--type-trabajo)", estudio:"var(--type-estudio)", examen:"var(--type-examen)", entrega:"var(--type-entrega)", otro:"var(--type-otro)"};
+  var TYPE_LABELS = {clase:"Clase", practica:"Práctica", trabajo:"Trabajo", estudio:"Estudio", examen:"Examen", entrega:"Entrega", otro:"Otro"};
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+  function fmtDateLong(iso){
+    var d = new Date(iso+"T00:00:00");
+    return d.toLocaleDateString("es-ES", {weekday:"long", day:"numeric", month:"long"});
+  }
+  function daysBetween(iso){
+    var d1 = new Date(todayISO+"T00:00:00"), d2 = new Date(iso+"T00:00:00");
+    return Math.round((d2-d1)/86400000);
+  }
+  function subjectById(id){ return state.subjects.find(function(s){return s.id===id;}); }
+
+  /* ---------------- SESSION LEDGER (aditivo, apto para varios dispositivos) ---------------- */
+  function sessionTotals(){
+    var bySubj = {}, byDate = {};
+    (state.sessionLog||[]).forEach(function(e){
+      bySubj[e.subjectId] = (bySubj[e.subjectId]||0) + e.minutes;
+      byDate[e.date] = (byDate[e.date]||0) + e.minutes;
+    });
+    return {bySubj:bySubj, byDate:byDate};
+  }
+  function subjectDoneHours(s){
+    var t = sessionTotals();
+    return Math.round(((s.done||0) + (t.bySubj[s.id]||0)/60)*10)/10;
+  }
+  function logStudySession(subjectId, mins, dateISO){
+    if(syncConfig && supabaseClient){
+      supabaseClient.from("bitacora_sessions").insert({room_code: syncConfig.room, subject_id: subjectId, minutes: mins, occurred_on: dateISO})
+        .then(function(res){
+          if(res.error){ toast("No se pudo guardar en la nube: " + res.error.message); return; }
+          pullSessions();
+        });
+    } else {
+      state.sessionLog = state.sessionLog || [];
+      state.sessionLog.push({id:"local_"+Date.now()+"_"+Math.random().toString(36).slice(2,6), subjectId:subjectId, minutes:mins, date:dateISO});
+      save(); renderAll();
+    }
+  }
+  function setManualDayTotal(iso, desiredTotal){
+    var currentDayTotal = sessionTotals().byDate[iso] || 0;
+    var delta = desiredTotal - currentDayTotal;
+    if(Math.abs(delta) < 0.01) return;
+    logStudySession("__manual__", delta, iso);
+  }
+
+  function effectiveGroup(subjectId){
+    if(state.subjectGroups && state.subjectGroups[subjectId]) return state.subjectGroups[subjectId];
+    return state.group;
+  }
+  function eventsForDate(iso){
+    return getEffectiveMasterEvents().filter(function(e){
+      return e.date===iso && (e.group===null || e.group===effectiveGroup(e.subject));
+    });
+  }
+  function timeToMin(t){ var p=t.split(":"); return (+p[0])*60+(+(p[1]||0)); }
+  function findScheduleConflicts(){
+    var evs = getEffectiveMasterEvents().filter(function(e){
+      return e.group===null || e.group===effectiveGroup(e.subject);
+    });
+    var byDate = {};
+    evs.forEach(function(e){ (byDate[e.date] = byDate[e.date]||[]).push(e); });
+    var conflicts = [];
+    Object.keys(byDate).forEach(function(d){
+      var list = byDate[d];
+      for(var i=0;i<list.length;i++){
+        for(var j=i+1;j<list.length;j++){
+          var s1=timeToMin(list[i].start), e1=timeToMin(list[i].end);
+          var s2=timeToMin(list[j].start), e2=timeToMin(list[j].end);
+          if(s1<e2 && s2<e1) conflicts.push({date:d, a:list[i], b:list[j]});
+        }
+      }
+    });
+    return conflicts.sort(function(a,b){return a.date.localeCompare(b.date);});
+  }
+  function renderConflictBanner(){
+    var el = document.getElementById("groupConflicts");
+    if(!el) return;
+    var conflicts = findScheduleConflicts();
+    if(conflicts.length===0){ el.innerHTML = ""; return; }
+    el.innerHTML = '<div class="banner exam" style="margin-top:12px;">⚠ '+conflicts.length+' choque(s) de horario con los subgrupos seleccionados:</div>' +
+      conflicts.map(function(c){
+        return '<div class="settings-desc" style="margin:4px 0 0;">'+fmtDateLong(c.date)+': <strong>'+c.a.title+'</strong> ('+c.a.start+'\u2013'+c.a.end+') se cruza con <strong>'+c.b.title+'</strong> ('+c.b.start+'\u2013'+c.b.end+')</div>';
+      }).join("");
+  }
+
+  /* ---------------- TABS ---------------- */
+  function switchTab(name){
+    document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.remove("active"); });
+    document.getElementById("panel-"+name).classList.add("active");
+    document.querySelectorAll(".tabbtn").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-tab")===name); });
+    if(name==="horario") renderHorario();
+    if(name==="calendario") renderCalendar();
+    if(name==="asignaturas") renderAsignaturas();
+  }
+  document.querySelectorAll(".tabbtn").forEach(function(b){
+    b.addEventListener("click", function(){ switchTab(b.getAttribute("data-tab")); });
+  });
+
+  /* ---------------- STREAK / MONTHLY STUDY CALENDAR ---------------- */
+  var STREAK_STAR_MIN = 360; // 6h
+  function computeStreak(){
+    var count = 0;
+    var byDate = sessionTotals().byDate;
+    var d = new Date(todayISO+"T00:00:00");
+    while(true){
+      var iso = d.toISOString().slice(0,10);
+      if(byDate[iso] && byDate[iso] > 0){ count++; d.setDate(d.getDate()-1); } else break;
+    }
+    return count;
+  }
+  function minutesToBg(mins){
+    if(!mins || mins<=0) return "rgba(255,255,255,.14)";
+    var ratio = Math.min(mins/STREAK_STAR_MIN, 1);
+    var alpha = 0.22 + ratio*0.7; // .22 -> .92
+    return "rgba(255,255,255,"+alpha.toFixed(2)+")";
+  }
+  var streakCalCursor = new Date(); streakCalCursor.setDate(1);
+  var STREAK_MONTHS = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  function renderStreakCalendar(){
+    document.getElementById("streakMonthLabel").textContent = STREAK_MONTHS[streakCalCursor.getMonth()] + " " + streakCalCursor.getFullYear();
+    var grid = document.getElementById("streakCalGrid");
+    grid.innerHTML = "";
+    var year = streakCalCursor.getFullYear(), month = streakCalCursor.getMonth();
+    var firstDay = new Date(year, month, 1);
+    var startOffset = (firstDay.getDay()+6)%7;
+    var daysInMonth = new Date(year, month+1, 0).getDate();
+    var todayDate = new Date(todayISO+"T00:00:00");
+    var byDate = sessionTotals().byDate;
+    for(var i=0;i<startOffset;i++){ var empty=document.createElement("div"); empty.className="streak-cell empty"; grid.appendChild(empty); }
+    for(var day=1; day<=daysInMonth; day++){
+      var iso = year+"-"+String(month+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+      var dt = new Date(year, month, day);
+      var mins = byDate[iso] || 0;
+      var btn = document.createElement("button");
+      btn.className = "streak-cell";
+      btn.setAttribute("aria-label", iso);
+      var isStar = mins >= STREAK_STAR_MIN;
+      if(isStar){ btn.classList.add("star"); btn.style.background = "rgba(255,255,255,.95)"; btn.style.color = "var(--c1)"; btn.textContent = "⭐"; }
+      else { btn.style.background = minutesToBg(mins); btn.textContent = day; }
+      if(iso === todayISO) btn.classList.add("today");
+      if(dt > todayDate){ btn.classList.add("future"); btn.disabled = true; }
+      btn.addEventListener("click", function(){ openStreakDayModal(this.getAttribute("aria-label")); });
+      grid.appendChild(btn);
+    }
+    document.getElementById("streakCount").textContent = computeStreak();
+  }
+  document.getElementById("streakPrevMonth").addEventListener("click", function(){ streakCalCursor.setMonth(streakCalCursor.getMonth()-1); renderStreakCalendar(); });
+  document.getElementById("streakNextMonth").addEventListener("click", function(){ streakCalCursor.setMonth(streakCalCursor.getMonth()+1); renderStreakCalendar(); });
+
+  var streakDayISO = null;
+  function openStreakDayModal(iso){
+    streakDayISO = iso;
+    document.getElementById("streakDayTitle").textContent = fmtDateLong(iso);
+    document.getElementById("streakDayMinutes").value = sessionTotals().byDate[iso] || 0;
+    showOverlay("overlayStreakDay");
+  }
+  document.getElementById("btnSaveStreakDay").addEventListener("click", function(){
+    if(!streakDayISO) return;
+    var mins = parseFloat(document.getElementById("streakDayMinutes").value)||0;
+    setManualDayTotal(streakDayISO, mins);
+    hideOverlay("overlayStreakDay"); toast("Actualizado ✓");
+  });
+  document.getElementById("btnClearStreakDay").addEventListener("click", function(){
+    if(!streakDayISO) return;
+    setManualDayTotal(streakDayISO, 0);
+    hideOverlay("overlayStreakDay"); toast("Puesto a cero");
+  });
+
+  /* ---------------- SUBJECTS ---------------- */
+  var editingSubjectId = null;
+  function renderSubjects(){
+    var wrap = document.getElementById("subjectsList");
+    wrap.innerHTML = "";
+    state.subjects.forEach(function(s){
+      var doneHours = subjectDoneHours(s);
+      var pct = s.target>0 ? Math.min(100, Math.round(doneHours/s.target*100)) : 0;
+      var el = document.createElement("div");
+      el.className = "subject";
+      el.innerHTML =
+        '<div class="subj-dot" style="background:'+s.colorHex+'">'+s.name.slice(0,1)+'</div>'+
+        '<div class="subj-main">'+
+          '<div class="subj-name-row"><span class="subj-name">'+s.name+'</span><span class="subj-hours">'+doneHours+'h / '+s.target+'h</span></div>'+
+          '<div class="beadbar"><div class="seg"><i style="width:'+pct+'%; background:'+s.colorHex+'"></i></div></div>'+
+        '</div>'+
+        '<button class="subj-edit-btn" data-id="'+s.id+'" aria-label="Editar '+s.name+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button>';
+      wrap.appendChild(el);
+    });
+    wrap.querySelectorAll(".subj-edit-btn").forEach(function(btn){
+      btn.addEventListener("click", function(){ openSubjectModal(btn.getAttribute("data-id")); });
+    });
+    var sel = document.getElementById("logSubject");
+    sel.innerHTML = state.subjects.map(function(s){ return '<option value="'+s.id+'">'+s.name+'</option>'; }).join("");
+  }
+  var SWATCH_COLORS = ["#C1272D","#E8734A","#F2A93B","#EFC94C","#8FAE6B","#B98BC9","#8AA6C2","#C9B79C","#7A1015","#5C1B22"];
+  function openSubjectModal(id){
+    editingSubjectId = id || null;
+    var s = id ? subjectById(id) : null;
+    document.getElementById("subjModalTitle").textContent = s ? "Editar asignatura" : "Añadir asignatura";
+    document.getElementById("subjName").value = s ? s.name : "";
+    document.getElementById("subjTarget").value = s ? s.target : 60;
+    document.getElementById("subjDone").value = s ? subjectDoneHours(s) : 0;
+    document.getElementById("btnDeleteSubject").style.display = s ? "block" : "none";
+    var sw = document.getElementById("subjSwatches"); sw.innerHTML = "";
+    var chosen = s ? s.colorHex : SWATCH_COLORS[0];
+    SWATCH_COLORS.forEach(function(c){
+      var d = document.createElement("div");
+      d.className = "swatch"+(c===chosen?" active":"");
+      d.style.background = c; d.setAttribute("data-color", c);
+      d.addEventListener("click", function(){
+        sw.querySelectorAll(".swatch").forEach(function(x){x.classList.remove("active");});
+        d.classList.add("active");
+      });
+      sw.appendChild(d);
+    });
+    showOverlay("overlaySubject");
+  }
+  document.getElementById("btnAddSubject").addEventListener("click", function(){ openSubjectModal(null); });
+  document.getElementById("btnSaveSubject").addEventListener("click", function(){
+    var name = document.getElementById("subjName").value.trim();
+    if(!name){ toast("Ponle un nombre a la asignatura"); return; }
+    var target = parseFloat(document.getElementById("subjTarget").value)||0;
+    var enteredDone = parseFloat(document.getElementById("subjDone").value)||0;
+    var activeSwatch = document.querySelector("#subjSwatches .swatch.active");
+    var colorHex = activeSwatch ? activeSwatch.getAttribute("data-color") : SWATCH_COLORS[0];
+    if(editingSubjectId){
+      var s = subjectById(editingSubjectId);
+      var sessionHours = (sessionTotals().bySubj[s.id]||0)/60;
+      s.name=name; s.target=target; s.colorHex=colorHex;
+      s.done = Math.round((enteredDone - sessionHours)*10)/10;
+    } else {
+      state.subjects.push({id:"s"+Date.now(), name:name, colorHex:colorHex, target:target, done:enteredDone});
+    }
+    save(); renderAll(); hideOverlay("overlaySubject"); toast("Guardado");
+  });
+  document.getElementById("btnDeleteSubject").addEventListener("click", function(){
+    if(!editingSubjectId) return;
+    state.subjects = state.subjects.filter(function(x){return x.id!==editingSubjectId;});
+    save(); renderAll(); hideOverlay("overlaySubject"); toast("Asignatura eliminada");
+  });
+
+  /* ---------------- LOG SESSION ---------------- */
+  document.getElementById("btnLog").addEventListener("click", function(){ showOverlay("overlayLog"); });
+  document.getElementById("btnSaveLog").addEventListener("click", function(){
+    var id = document.getElementById("logSubject").value;
+    var mins = parseFloat(document.getElementById("logMinutes").value)||0;
+    if(mins<=0){ toast("Pon los minutos de la sesión"); return; }
+    logStudySession(id, mins, todayISO);
+    hideOverlay("overlayLog"); toast("Sesión registrada ✓");
+  });
+
+  /* ---------------- EXAMS (inicio tab) ---------------- */
+  function renderExams(){
+    var wrap = document.getElementById("examsList");
+    var exams = getEffectiveMasterEvents().filter(function(e){
+      return e.type==="examen" && daysBetween(e.date)>=0 && (e.group===null || e.group===effectiveGroup(e.subject));
+    }).sort(function(a,b){return a.date.localeCompare(b.date);}).slice(0,6);
+    if(exams.length===0){ wrap.innerHTML = '<div class="plan-empty">No tienes exámenes próximos.</div>'; return; }
+    wrap.innerHTML = exams.map(function(e){
+      var d = daysBetween(e.date);
+      return '<div class="exam-row"><div class="exam-days"><b>'+d+'</b><span>días</span></div>'+
+        '<div class="exam-main"><div class="exam-name">'+e.title+'</div><div class="exam-date">'+fmtDateLong(e.date)+'</div></div></div>';
+    }).join("");
+  }
+
+  /* ---------------- DEADLINES (entregas) ---------------- */
+  function renderDeadlines(){
+    var wrap = document.getElementById("deadlinesList");
+    var items = state.events.filter(function(e){ return e.type==="entrega" && daysBetween(e.date)>=0; })
+      .sort(function(a,b){ return (a.date+a.start).localeCompare(b.date+b.start); }).slice(0,8);
+    if(items.length===0){ wrap.innerHTML = '<div class="plan-empty">No tienes entregas próximas guardadas.</div>'; return; }
+    wrap.innerHTML = items.map(function(e){
+      var d = daysBetween(e.date);
+      return '<div class="exam-row" data-id="'+e.id+'" style="cursor:pointer;">'+
+        '<div class="exam-days" style="color:var(--type-entrega)"><b>'+d+'</b><span>días</span></div>'+
+        '<div class="exam-main"><div class="exam-name">'+e.title+'</div><div class="exam-date">'+fmtDateLong(e.date)+' · '+e.start+'</div></div></div>';
+    }).join("");
+    wrap.querySelectorAll(".exam-row").forEach(function(row){
+      row.addEventListener("click", function(){ openDeadlineModal(row.getAttribute("data-id")); });
+    });
+  }
+  var editingDeadlineId = null;
+  function fillDeadlineSubjectSelect(){
+    var sel = document.getElementById("dlSubject");
+    sel.innerHTML = '<option value="">— sin asignar —</option>' +
+      state.subjects.map(function(s){ return '<option value="'+s.id+'">'+s.name+'</option>'; }).join("");
+  }
+  function openDeadlineModal(id){
+    editingDeadlineId = id || null;
+    var e = id ? state.events.find(function(x){return x.id===id;}) : null;
+    document.getElementById("deadlineModalTitle").textContent = e ? "Editar fecha límite" : "Añadir fecha límite";
+    document.getElementById("dlTitle").value = e ? e.title : "";
+    document.getElementById("dlDate").value = e ? e.date : todayISO;
+    document.getElementById("dlTime").value = e ? e.start : "23:59";
+    fillDeadlineSubjectSelect();
+    document.getElementById("dlSubject").value = e && e.subjectId ? e.subjectId : "";
+    document.getElementById("btnDeleteDeadline").style.display = e ? "block" : "none";
+    showOverlay("overlayDeadline");
+  }
+  document.getElementById("btnAddDeadline").addEventListener("click", function(){ openDeadlineModal(null); });
+  document.getElementById("btnSaveDeadline").addEventListener("click", function(){
+    var title = document.getElementById("dlTitle").value.trim();
+    var date = document.getElementById("dlDate").value;
+    var time = document.getElementById("dlTime").value || "23:59";
+    var subjectId = document.getElementById("dlSubject").value || null;
+    if(!title || !date){ toast("Ponle título y fecha"); return; }
+    if(editingDeadlineId){
+      var e = state.events.find(function(x){return x.id===editingDeadlineId;});
+      e.title=title; e.date=date; e.start=time; e.end=time; e.subjectId=subjectId;
+    } else {
+      state.events.push({id:"dl"+Date.now(), date:date, title:title, start:time, end:time, type:"entrega", subjectId:subjectId});
+    }
+    save(); renderAll(); hideOverlay("overlayDeadline"); toast("Guardado");
+  });
+  document.getElementById("btnDeleteDeadline").addEventListener("click", function(){
+    if(!editingDeadlineId) return;
+    state.events = state.events.filter(function(x){return x.id!==editingDeadlineId;});
+    save(); renderAll(); hideOverlay("overlayDeadline"); toast("Eliminada");
+  });
+
+  /* ---------------- HORARIO TAB ---------------- */
+  var horarioCursor = todayISO;
+
+  function studySuggestion(dateISO){
+    var isFiesta = state.events.some(function(e){ return e.date===dateISO && /fiesta/i.test(e.title); });
+    var examToday = getEffectiveMasterEvents().some(function(e){ return e.date===dateISO && e.type==="examen" && (e.group===null||e.group===effectiveGroup(e.subject)); });
+    if(isFiesta) return {mode:"fiesta"};
+    var pending = state.subjects.filter(function(s){ return (s.target-subjectDoneHours(s)) > 0; });
+    if(pending.length===0) return {mode:"done"};
+    var totalWeight = pending.reduce(function(a,s){return a+s.target;},0);
+    var rows = pending.map(function(s){
+      var raw = state.dailyStudyMin * (s.target/totalWeight);
+      var cap = (s.target-subjectDoneHours(s))*60;
+      var mins = Math.round(Math.min(raw, cap));
+      return {subject:s, minutes:mins};
+    }).filter(function(r){return r.minutes>0;}).sort(function(a,b){return b.minutes-a.minutes;});
+    return {mode: examToday ? "exam":"normal", rows:rows};
+  }
+
+  function renderHorario(){
+    var iso = horarioCursor;
+    var d = new Date(iso+"T00:00:00");
+    document.getElementById("dayLabel").textContent = d.toLocaleDateString("es-ES",{weekday:"long", day:"numeric", month:"short"});
+
+    var evs = eventsForDate(iso).sort(function(a,b){return a.start.localeCompare(b.start);});
+    var clases = evs.filter(function(e){return e.type==="clase";});
+    var practicas = evs.filter(function(e){return e.type==="practica";});
+    var examenesHoy = evs.filter(function(e){return e.type==="examen";});
+    var otros = state.events.filter(function(e){return e.date===iso;});
+
+    var deadlinesHoy = state.events.filter(function(e){ return e.date===iso && e.type==="entrega"; });
+    var banner = document.getElementById("dayBanner");
+    banner.innerHTML = "";
+    if(examenesHoy.length){
+      banner.innerHTML += '<div class="banner exam">📌 Examen hoy: '+examenesHoy.map(function(e){return e.title;}).join(", ")+'</div>';
+    }
+    if(deadlinesHoy.length){
+      banner.innerHTML += '<div class="banner" style="background:#DCEEF1; color:#245057;">⏳ Entrega hoy: '+deadlinesHoy.map(function(e){return e.title+' ('+e.start+')';}).join(", ")+'</div>';
+    }
+
+    function rowsHtml(list, emptyMsg){
+      if(list.length===0) return '<div class="plan-empty">'+emptyMsg+'</div>';
+      return list.map(function(e){
+        var tag = e.type==="practica" ? ("Grp "+e.group+" · "+e.room) : e.room;
+        return '<div class="item-row"><div class="item-time">'+e.start+'–'+e.end+'</div>'+
+          '<div class="item-dot" style="background:'+TYPE_COLORS[e.type]+'"></div>'+
+          '<div class="item-title">'+e.title+'</div><div class="item-tag">'+(tag||"")+'</div></div>';
+      }).join("");
+    }
+    document.getElementById("horClases").innerHTML = rowsHtml(clases, "Sin clases este día.");
+    document.getElementById("horPracticas").innerHTML = rowsHtml(practicas, "Sin prácticas este día.");
+    document.getElementById("horOtros").innerHTML = otros.length ? otros.map(function(e){
+      return '<div class="item-row"><div class="item-time">'+e.start+'–'+e.end+'</div>'+
+        '<div class="item-dot" style="background:'+TYPE_COLORS[e.type]+'"></div>'+
+        '<div class="item-title">'+e.title+'</div><div class="item-tag">'+TYPE_LABELS[e.type]+'</div></div>';
+    }).join("") : '<div class="plan-empty">Nada añadido a mano este día.</div>';
+
+    var sug = studySuggestion(iso);
+    var box = document.getElementById("horEstudio");
+    if(sug.mode==="fiesta"){
+      box.innerHTML = '<div class="banner fiesta">🎉 Día marcado sin estudio. ¡A disfrutar!</div>';
+    } else if(sug.mode==="done"){
+      box.innerHTML = '<div class="banner done">✅ Ya llegaste a tus horas objetivo en todas las asignaturas.</div>';
+    } else {
+      var extra = sug.mode==="exam" ? '<div class="banner exam" style="margin-bottom:8px;">Hoy tienes examen: repasa a fondo esa asignatura y deja el resto más ligero.</div>' : "";
+      box.innerHTML = extra + sug.rows.map(function(r){
+        return '<div class="study-row"><div class="item-dot" style="background:'+r.subject.colorHex+'"></div>'+
+          '<div class="study-name">'+r.subject.name+'</div><div class="study-min">'+r.minutes+' min</div></div>';
+      }).join("");
+    }
+  }
+  document.getElementById("prevDay").addEventListener("click", function(){
+    var d = new Date(horarioCursor+"T00:00:00"); d.setDate(d.getDate()-1);
+    horarioCursor = d.toISOString().slice(0,10); renderHorario();
+  });
+  document.getElementById("nextDay").addEventListener("click", function(){
+    var d = new Date(horarioCursor+"T00:00:00"); d.setDate(d.getDate()+1);
+    horarioCursor = d.toISOString().slice(0,10); renderHorario();
+  });
+  document.getElementById("jumpToday").addEventListener("click", function(){ horarioCursor = todayISO; renderHorario(); });
+
+  /* ---------------- CALENDAR TAB ---------------- */
+  var calCursor = new Date(); calCursor.setDate(1);
+  var DOW = ["L","M","X","J","V","S","D"];
+  var MONTHS = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  function renderCalendarDow(){
+    document.getElementById("calDow").innerHTML = DOW.map(function(d){return '<div class="cal-dow">'+d+'</div>';}).join("");
+  }
+  function renderCalendar(){
+    document.getElementById("monthLabel").textContent = MONTHS[calCursor.getMonth()] + " " + calCursor.getFullYear();
+    var grid = document.getElementById("calGrid"); grid.innerHTML = "";
+    var year = calCursor.getFullYear(), month = calCursor.getMonth();
+    var firstDay = new Date(year, month, 1);
+    var startOffset = (firstDay.getDay()+6)%7;
+    var daysInMonth = new Date(year, month+1, 0).getDate();
+    for(var i=0;i<startOffset;i++){ var e=document.createElement("div"); e.className="cal-cell empty"; grid.appendChild(e); }
+    for(var day=1; day<=daysInMonth; day++){
+      var iso = year+"-"+String(month+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+      var cell = document.createElement("div");
+      cell.className = "cal-cell"+(iso===todayISO?" today":"");
+      var dayAll = eventsForDate(iso).concat(state.events.filter(function(e){return e.date===iso;}));
+      var dotsHtml = dayAll.slice(0,4).map(function(e){return '<i style="background:'+TYPE_COLORS[e.type]+'"></i>';}).join("");
+      cell.innerHTML = '<div class="dnum">'+day+'</div><div class="cal-dots">'+dotsHtml+'</div>';
+      cell.setAttribute("data-iso", iso);
+      cell.addEventListener("click", function(){ openDayModal(this.getAttribute("data-iso")); });
+      grid.appendChild(cell);
+    }
+  }
+  document.getElementById("prevMonth").addEventListener("click", function(){ calCursor.setMonth(calCursor.getMonth()-1); renderCalendar(); });
+  document.getElementById("nextMonth").addEventListener("click", function(){ calCursor.setMonth(calCursor.getMonth()+1); renderCalendar(); });
+
+  var dayModalISO = null; var chosenType = "estudio"; var editingDayEventId = null; var editingMasterId = null;
+  function openDayModal(iso){
+    dayModalISO = iso;
+    document.getElementById("dayModalTitle").textContent = fmtDateLong(iso);
+    renderAutoList();
+    hideMasterEditForm();
+    resetDayEventForm();
+    renderDayEvents();
+    showOverlay("overlayDay");
+  }
+  function renderAutoList(){
+    var autoWrap = document.getElementById("dayAutoList");
+    var autoEvs = eventsForDate(dayModalISO).sort(function(a,b){return a.start.localeCompare(b.start);});
+    autoWrap.innerHTML = autoEvs.length ? autoEvs.map(function(e){
+      var overridden = state.masterOverrides && state.masterOverrides[e.id];
+      return '<div class="day-event-row" data-mid="'+e.id+'" style="cursor:pointer;"><div class="plan-dot item-dot" style="background:'+TYPE_COLORS[e.type]+'"></div>'+
+        '<div class="day-event-info"><div class="t">'+e.title+(overridden?' <span class="muted" style="font-weight:500;">(modificado)</span>':'')+'</div><div class="m">'+e.start+'–'+e.end+' · '+TYPE_LABELS[e.type]+'</div></div></div>';
+    }).join("") : '<div class="plan-empty">Nada del horario oficial este día.</div>';
+    autoWrap.querySelectorAll(".day-event-row").forEach(function(row){
+      row.addEventListener("click", function(){ openMasterEditForm(row.getAttribute("data-mid")); });
+    });
+  }
+  function openMasterEditForm(id){
+    var e = getEffectiveMasterEvents().find(function(x){return x.id===id;});
+    if(!e) return;
+    editingMasterId = id;
+    document.getElementById("masterEditLabel").textContent = e.title + " · " + TYPE_LABELS[e.type];
+    document.getElementById("mevDate").value = e.date;
+    document.getElementById("mevStart").value = e.start;
+    document.getElementById("mevEnd").value = e.end;
+    document.getElementById("btnRestoreMasterOccurrence").style.display = (state.masterOverrides && state.masterOverrides[id]) ? "block" : "none";
+    document.getElementById("masterEditForm").style.display = "block";
+  }
+  function hideMasterEditForm(){
+    editingMasterId = null;
+    document.getElementById("masterEditForm").style.display = "none";
+  }
+  document.getElementById("btnCancelMasterEdit").addEventListener("click", hideMasterEditForm);
+  document.getElementById("btnSaveMasterEdit").addEventListener("click", function(){
+    if(!editingMasterId) return;
+    var date = document.getElementById("mevDate").value;
+    var start = document.getElementById("mevStart").value;
+    var end = document.getElementById("mevEnd").value;
+    if(!date || !start || !end){ toast("Completa fecha y horas"); return; }
+    state.masterOverrides = state.masterOverrides || {};
+    state.masterOverrides[editingMasterId] = {date:date, start:start, end:end};
+    save(); hideMasterEditForm(); renderAutoList(); renderAll(); toast("Cambiado ✓");
+  });
+  document.getElementById("btnDeleteMasterOccurrence").addEventListener("click", function(){
+    if(!editingMasterId) return;
+    state.masterOverrides = state.masterOverrides || {};
+    state.masterOverrides[editingMasterId] = {deleted:true};
+    save(); hideMasterEditForm(); renderAutoList(); renderAll(); toast("Eliminada ✓");
+  });
+  document.getElementById("btnRestoreMasterOccurrence").addEventListener("click", function(){
+    if(!editingMasterId) return;
+    if(state.masterOverrides) delete state.masterOverrides[editingMasterId];
+    save(); hideMasterEditForm(); renderAutoList(); renderAll(); toast("Restaurado ✓");
+  });
+  function renderDayEvents(){
+    var wrap = document.getElementById("dayEventsList");
+    var evs = state.events.filter(function(e){return e.date===dayModalISO;}).sort(function(a,b){return a.start.localeCompare(b.start);});
+    if(evs.length===0){ wrap.innerHTML = '<div class="plan-empty">Sin eventos tuyos este día.</div>'; return; }
+    wrap.innerHTML = evs.map(function(e){
+      return '<div class="day-event-row'+(editingDayEventId===e.id?' editing':'')+'" data-id="'+e.id+'"><div class="item-dot" style="background:'+TYPE_COLORS[e.type]+'"></div>'+
+        '<div class="day-event-info"><div class="t">'+e.title+'</div><div class="m">'+e.start+'–'+e.end+' · '+TYPE_LABELS[e.type]+'</div></div>'+
+        '<button class="del" data-id="'+e.id+'" aria-label="Eliminar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button></div>';
+    }).join("");
+    wrap.querySelectorAll(".day-event-info, .item-dot").forEach(function(el){
+      el.addEventListener("click", function(){
+        var row = el.closest(".day-event-row");
+        openDayEventForEdit(row.getAttribute("data-id"));
+      });
+    });
+    wrap.querySelectorAll(".del").forEach(function(btn){
+      btn.addEventListener("click", function(ev){
+        ev.stopPropagation();
+        state.events = state.events.filter(function(x){return x.id!==btn.getAttribute("data-id");});
+        if(editingDayEventId===btn.getAttribute("data-id")) resetDayEventForm();
+        save(); renderDayEvents(); renderAll();
+      });
+    });
+  }
+  function openDayEventForEdit(id){
+    var e = state.events.find(function(x){return x.id===id;});
+    if(!e) return;
+    editingDayEventId = id;
+    document.getElementById("evFormLabel").textContent = "Editando evento";
+    document.getElementById("evTitle").value = e.title;
+    document.getElementById("evStart").value = e.start;
+    document.getElementById("evEnd").value = e.end;
+    chosenType = e.type; updateTypePickUI();
+    document.getElementById("btnAddEvent").textContent = "Guardar cambios";
+    document.getElementById("btnCancelEditEvent").style.display = "block";
+    renderDayEvents();
+  }
+  function resetDayEventForm(){
+    editingDayEventId = null;
+    document.getElementById("evFormLabel").textContent = "Añadir evento ese día";
+    document.getElementById("evTitle").value = "";
+    document.getElementById("evStart").value = "09:00";
+    document.getElementById("evEnd").value = "10:00";
+    chosenType = "estudio"; updateTypePickUI();
+    document.getElementById("btnAddEvent").textContent = "Añadir evento";
+    document.getElementById("btnCancelEditEvent").style.display = "none";
+  }
+  document.getElementById("btnCancelEditEvent").addEventListener("click", function(){
+    resetDayEventForm(); renderDayEvents();
+  });
+  function updateTypePickUI(){
+    document.querySelectorAll("#evTypePick button").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-type")===chosenType); });
+  }
+  document.querySelectorAll("#evTypePick button").forEach(function(b){
+    b.addEventListener("click", function(){ chosenType = b.getAttribute("data-type"); updateTypePickUI(); });
+  });
+  document.getElementById("btnAddEvent").addEventListener("click", function(){
+    var title = document.getElementById("evTitle").value.trim();
+    if(!title){ toast("Ponle un título al evento"); return; }
+    var start = document.getElementById("evStart").value || "09:00";
+    var end = document.getElementById("evEnd").value || "10:00";
+    if(editingDayEventId){
+      var e = state.events.find(function(x){return x.id===editingDayEventId;});
+      if(e){ e.title=title; e.start=start; e.end=end; e.type=chosenType; }
+      save(); resetDayEventForm(); renderDayEvents(); renderAll(); toast("Evento actualizado");
+    } else {
+      state.events.push({id:"ev"+Date.now(), date:dayModalISO, title:title, start:start, end:end, type:chosenType});
+      save(); renderDayEvents(); renderAll();
+      document.getElementById("evTitle").value = ""; toast("Evento añadido");
+    }
+  });
+
+  /* ---------------- ASIGNATURAS (profesorado + evaluación) ---------------- */
+  function ensureExtra(sid){
+    state.subjectExtra = state.subjectExtra || {};
+    if(!state.subjectExtra[sid]) state.subjectExtra[sid] = {teacher:{name:"", email:"", office:"", notes:""}, criteria:[]};
+    if(!state.subjectExtra[sid].teacher) state.subjectExtra[sid].teacher = {name:"", email:"", office:"", notes:""};
+    if(!state.subjectExtra[sid].criteria) state.subjectExtra[sid].criteria = [];
+    return state.subjectExtra[sid];
+  }
+  function critRowHtml(sid, c){
+    return '<div class="crit-row" data-cid="'+c.id+'" style="display:flex; gap:6px; align-items:center; margin-bottom:6px;">'+
+      '<input type="text" class="critName" placeholder="ej. Examen final" value="'+(c.name||"").replace(/"/g,"&quot;")+'" style="flex:2; min-width:0; padding:8px; border-radius:10px; border:1px solid var(--line); font-family:inherit; font-size:.82rem;">'+
+      '<input type="number" class="critWeight" placeholder="%" min="0" max="100" value="'+(c.weight||0)+'" style="width:56px; padding:8px; border-radius:10px; border:1px solid var(--line); font-family:inherit; font-size:.82rem;">'+
+      '<input type="number" class="critGrade" placeholder="nota" min="0" max="10" step="0.1" value="'+(c.grade===null||c.grade===undefined?"":c.grade)+'" style="width:64px; padding:8px; border-radius:10px; border:1px solid var(--line); font-family:inherit; font-size:.82rem;">'+
+      '<button class="delCrit" data-cid="'+c.id+'" aria-label="Eliminar" style="background:none; border:none; cursor:pointer; color:var(--ink-soft); flex:none;">✕</button></div>';
+  }
+  function renderCoordinatorCard(){
+    var wrap = document.getElementById("coordinatorCard");
+    if(!wrap) return;
+    if(!state.coordinator){
+      wrap.innerHTML = '<button class="ghost-btn" id="btnAddCoordinator" type="button" style="margin-top:0;">+ añadir coordinador de curso</button>';
+      document.getElementById("btnAddCoordinator").addEventListener("click", function(){
+        state.coordinator = {name:"", email:""};
+        save(); renderCoordinatorCard();
+      });
+      return;
+    }
+    wrap.innerHTML = '<div class="card">'+
+      '<div class="settings-title">Coordinador de curso</div>'+
+      '<input type="text" id="coordName" placeholder="Nombre" value="'+(state.coordinator.name||"").replace(/"/g,"&quot;")+'" style="width:100%; padding:9px; border-radius:12px; border:1px solid var(--line); margin-bottom:6px; font-family:inherit; font-size:.83rem;">'+
+      '<input type="email" id="coordEmail" placeholder="email@upct.es" value="'+(state.coordinator.email||"").replace(/"/g,"&quot;")+'" style="width:100%; padding:9px; border-radius:12px; border:1px solid var(--line); margin-bottom:10px; font-family:inherit; font-size:.83rem;">'+
+      '<button class="danger-btn" id="btnRemoveCoordinator" type="button" style="margin-top:0;">Quitar coordinador</button>'+
+    '</div>';
+    document.getElementById("coordName").addEventListener("input", function(){ state.coordinator.name = this.value; save(); });
+    document.getElementById("coordEmail").addEventListener("input", function(){ state.coordinator.email = this.value; save(); });
+    document.getElementById("btnRemoveCoordinator").addEventListener("click", function(){
+      state.coordinator = null; save(); renderCoordinatorCard(); toast("Coordinador eliminado");
+    });
+  }
+  function renderAsignaturas(){
+    renderCoordinatorCard();
+    var wrap = document.getElementById("asignaturasList");
+    wrap.innerHTML = state.subjects.map(function(s){
+      var extra = ensureExtra(s.id);
+      var initials = s.name.split(" ").filter(function(w){return w.length>2;}).slice(0,2).map(function(w){return w[0];}).join("").toUpperCase() || s.name.slice(0,2).toUpperCase();
+      return '<div class="card">'+
+        '<div class="subj-name-row" style="margin-bottom:14px;"><div class="subj-dot" style="background:'+s.colorHex+'">'+initials+'</div><div class="subj-name" style="font-size:1.02rem;">'+s.name+'</div></div>'+
+        '<div class="settings-block">'+
+          '<div class="settings-title">Profesorado</div>'+
+          '<input type="text" class="teacherName" data-sid="'+s.id+'" placeholder="Nombre del profesor" value="'+(extra.teacher.name||"").replace(/"/g,"&quot;")+'" style="width:100%; padding:9px; border-radius:12px; border:1px solid var(--line); margin-bottom:6px; font-family:inherit; font-size:.83rem;">'+
+          '<input type="email" class="teacherEmail" data-sid="'+s.id+'" placeholder="email@upct.es" value="'+(extra.teacher.email||"").replace(/"/g,"&quot;")+'" style="width:100%; padding:9px; border-radius:12px; border:1px solid var(--line); margin-bottom:6px; font-family:inherit; font-size:.83rem;">'+
+          '<input type="text" class="teacherOffice" data-sid="'+s.id+'" placeholder="Despacho" value="'+(extra.teacher.office||"").replace(/"/g,"&quot;")+'" style="width:100%; padding:9px; border-radius:12px; border:1px solid var(--line); margin-bottom:6px; font-family:inherit; font-size:.83rem;">'+
+          '<textarea class="teacherNotes" data-sid="'+s.id+'" placeholder="Notas / observaciones" rows="2" style="width:100%; padding:9px; border-radius:12px; border:1px solid var(--line); font-family:inherit; font-size:.83rem; resize:vertical;">'+(extra.teacher.notes||"")+'</textarea>'+
+        '</div>'+
+        '<div class="settings-block">'+
+          '<div class="settings-title">Criterios de evaluación</div>'+
+          '<div class="crit-header" style="display:flex; gap:6px; font-size:.68rem; color:var(--ink-soft); font-weight:700; text-transform:uppercase; margin-bottom:6px;"><div style="flex:2;">Criterio</div><div style="width:56px;">Peso%</div><div style="width:64px;">Nota</div><div style="width:16px;"></div></div>'+
+          '<div class="critList" data-sid="'+s.id+'">'+ extra.criteria.map(function(c){ return critRowHtml(s.id, c); }).join("") +'</div>'+
+          '<button class="ghost-btn addCritBtn" data-sid="'+s.id+'" type="button">+ añadir criterio</button>'+
+          '<div class="settings-desc critSummary" data-sid="'+s.id+'" style="margin-top:8px;"></div>'+
+        '</div>'+
+      '</div>';
+    }).join("") || '<div class="plan-empty">Añade asignaturas desde Inicio para verlas aquí.</div>';
+    state.subjects.forEach(function(s){ updateCritSummary(s.id); });
+  }
+  function updateCritSummary(sid){
+    var el = document.querySelector('.critSummary[data-sid="'+sid+'"]');
+    if(!el) return;
+    var extra = ensureExtra(sid);
+    var totalWeight = extra.criteria.reduce(function(a,c){return a+(c.weight||0);},0);
+    var graded = extra.criteria.filter(function(c){return c.grade!==null && c.grade!==undefined && c.grade!=="";});
+    var gradedWeight = graded.reduce(function(a,c){return a+(c.weight||0);},0);
+    var weightedSum = graded.reduce(function(a,c){return a+(c.weight||0)*(parseFloat(c.grade)||0);},0);
+    var msg = "Suma de pesos: "+totalWeight+"%"+(extra.criteria.length && totalWeight!==100 ? " (revisa, no suma 100%)" : "");
+    if(gradedWeight>0){
+      var avgGraded = (weightedSum/gradedWeight).toFixed(2);
+      msg += " · Nota media de lo evaluado ("+gradedWeight+"% del total): "+avgGraded;
+      if(totalWeight>0 && gradedWeight<totalWeight){
+        var estimateIfRestFive = ((weightedSum + (totalWeight-gradedWeight)*5)/totalWeight).toFixed(2);
+        msg += " · Si el resto sacas un 5: "+estimateIfRestFive;
+      }
+    }
+    el.textContent = msg;
+  }
+  document.getElementById("asignaturasList").addEventListener("input", function(ev){
+    var t = ev.target;
+    if(t.classList.contains("teacherName")){ ensureExtra(t.getAttribute("data-sid")).teacher.name = t.value; save(); }
+    else if(t.classList.contains("teacherEmail")){ ensureExtra(t.getAttribute("data-sid")).teacher.email = t.value; save(); }
+    else if(t.classList.contains("teacherOffice")){ ensureExtra(t.getAttribute("data-sid")).teacher.office = t.value; save(); }
+    else if(t.classList.contains("teacherNotes")){ ensureExtra(t.getAttribute("data-sid")).teacher.notes = t.value; save(); }
+    else if(t.classList.contains("critName") || t.classList.contains("critWeight") || t.classList.contains("critGrade")){
+      var row = t.closest(".crit-row");
+      var sid = row.closest(".critList").getAttribute("data-sid");
+      var cid = row.getAttribute("data-cid");
+      var crit = ensureExtra(sid).criteria.find(function(c){return c.id===cid;});
+      if(crit){
+        if(t.classList.contains("critName")) crit.name = t.value;
+        if(t.classList.contains("critWeight")) crit.weight = parseFloat(t.value)||0;
+        if(t.classList.contains("critGrade")) crit.grade = t.value===""? null : parseFloat(t.value);
+      }
+      save(); updateCritSummary(sid);
+    }
+  });
+  document.getElementById("asignaturasList").addEventListener("click", function(ev){
+    var addBtn = ev.target.closest(".addCritBtn");
+    if(addBtn){
+      var sid = addBtn.getAttribute("data-sid");
+      ensureExtra(sid).criteria.push({id:"c"+Date.now(), name:"", weight:0, grade:null});
+      save(); renderAsignaturas();
+      return;
+    }
+    var delBtn = ev.target.closest(".delCrit");
+    if(delBtn){
+      var row = delBtn.closest(".crit-row");
+      var sid = row.closest(".critList").getAttribute("data-sid");
+      var cid = row.getAttribute("data-cid");
+      var extra = ensureExtra(sid);
+      extra.criteria = extra.criteria.filter(function(c){return c.id!==cid;});
+      save(); renderAsignaturas();
+      return;
+    }
+  });
+
+  /* ---------------- AJUSTES ---------------- */
+  function renderPaletteList(){
+    var wrap = document.getElementById("paletteList"); wrap.innerHTML = "";
+    PALETTES.forEach(function(p){
+      var row = document.createElement("div");
+      row.className = "palette-opt"+(state.palette===p.id?" active":"");
+      row.innerHTML = '<div class="palette-strip">'+p.colors.map(function(c){return '<div style="background:'+c+'"></div>';}).join("")+'</div><div class="palette-name">'+p.name+'</div>';
+      row.addEventListener("click", function(){
+        state.palette = p.id;
+        document.documentElement.setAttribute("data-palette", p.id);
+        document.body.setAttribute("data-palette", p.id);
+        save(); renderPaletteList(); toast("Paleta actualizada");
+      });
+      wrap.appendChild(row);
+    });
+  }
+  function renderGroupPick(){
+    document.querySelectorAll("#groupPick button").forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-g")===state.group);
+    });
+  }
+  document.querySelectorAll("#groupPick button").forEach(function(b){
+    b.addEventListener("click", function(){
+      state.group = b.getAttribute("data-g");
+      save(); renderGroupPick(); renderAll(); toast("Grupo general actualizado");
+    });
+  });
+  function renderSubjectGroupList(){
+    var wrap = document.getElementById("subjectGroupList");
+    if(!wrap) return;
+    wrap.innerHTML = state.subjects.map(function(s){
+      var current = (state.subjectGroups && state.subjectGroups[s.id]) || "";
+      return '<div class="row-between" style="padding:6px 0;">'+
+        '<div style="font-size:.85rem; font-weight:600;">'+s.name+'</div>'+
+        '<select data-sid="'+s.id+'" class="subjGroupSel" style="padding:6px 8px; border-radius:10px; border:1px solid var(--line); font-family:inherit; font-size:.8rem;">'+
+          '<option value=""'+(current===""?" selected":"")+'>General (grupo '+state.group+')</option>'+
+          ["1","2","3","4"].map(function(g){return '<option value="'+g+'"'+(current===g?" selected":"")+'>Grupo '+g+'</option>';}).join("")+
+        '</select></div>';
+    }).join("");
+    wrap.querySelectorAll(".subjGroupSel").forEach(function(sel){
+      sel.addEventListener("change", function(){
+        var sid = sel.getAttribute("data-sid");
+        state.subjectGroups = state.subjectGroups || {};
+        if(sel.value==="") delete state.subjectGroups[sid];
+        else state.subjectGroups[sid] = sel.value;
+        save(); renderAll(); toast("Subgrupo actualizado");
+      });
+    });
+  }
+  document.getElementById("dailyStudyMin").addEventListener("change", function(e){
+    state.dailyStudyMin = parseInt(e.target.value)||0;
+    save(); renderAll(); toast("Objetivo diario actualizado");
+  });
+
+  document.getElementById("btnExport").addEventListener("click", function(){
+    var blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a"); a.href = url; a.download = "bitacora-datos.json"; a.click();
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById("btnImportTrigger").addEventListener("click", function(){ document.getElementById("importFile").click(); });
+  document.getElementById("importFile").addEventListener("change", function(ev){
+    var file = ev.target.files[0]; if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var d = JSON.parse(reader.result);
+        if(d.subjects && d.events){
+          state = d;
+          document.documentElement.setAttribute("data-palette", state.palette||"spectrum");
+          save(); renderAll(); renderPaletteList(); renderGroupPick();
+          toast("Datos importados");
+        } else { toast("El archivo no tiene el formato esperado"); }
+      }catch(e){ toast("No se pudo leer el archivo"); }
+    };
+    reader.readAsText(file);
+  });
+  document.getElementById("btnReset").addEventListener("click", function(){
+    if(confirm("¿Seguro que quieres borrar todos tus datos? Esto no se puede deshacer.")){
+      state = defaultData(); save(); renderAll(); renderPaletteList(); renderGroupPick();
+      toast("Datos reiniciados");
+    }
+  });
+
+  /* ---------------- PDF IMPORT ---------------- */
+  var PDFJS_CDN = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+  var PDFJS_WORKER_CDN = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  var pdfjsLoadPromise = null;
+  function loadPdfJs(){
+    if(window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    if(pdfjsLoadPromise) return pdfjsLoadPromise;
+    pdfjsLoadPromise = new Promise(function(resolve, reject){
+      var s = document.createElement("script");
+      s.src = PDFJS_CDN;
+      s.onload = function(){
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_CDN;
+        resolve(window.pdfjsLib);
+      };
+      s.onerror = function(){ reject(new Error("No se pudo cargar el lector de PDF (revisa tu conexión).")); };
+      document.head.appendChild(s);
+    });
+    return pdfjsLoadPromise;
+  }
+
+  var DAY_NAMES_ES = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+  var TIME_RANGE_RE = /^\d{1,2}:\d{2}[\u2013-]\d{1,2}:\d{2}$/;
+
+  function pdfAddDays(dateStr, days){
+    var parts = dateStr.split("/");
+    var d = parseInt(parts[0],10), m = parseInt(parts[1],10), y = parseInt(parts[2],10);
+    var dt = new Date(Date.UTC(y, m-1, d));
+    dt.setUTCDate(dt.getUTCDate()+days);
+    return dt.toISOString().slice(0,10);
+  }
+
+  function classifyPdfLine(line, block){
+    if(/^ETSII#PS13$|^LAB$|^INF$/.test(line)){ block.room = line; return; }
+    var sg = line.match(/^Subgrupo:\s*(\d+)/);
+    if(sg){ block.subgrupo = sg[1]; return; }
+    if(/^Parcial\s*\d+/i.test(line)){ block.parcial = line.trim(); return; }
+    if(/^Sin clase asignada$/i.test(line)){ block.room = ""; return; }
+    block.titleLines.push(line);
+  }
+
+  async function parsePdfPage(page){
+    var content = await page.getTextContent();
+    var items = content.items.map(function(it){
+      return {str: it.str, x: +it.transform[4].toFixed(1), y: +it.transform[5].toFixed(1)};
+    }).filter(function(it){ return it.str.trim()!==""; });
+
+    var semanaItem = items.find(function(it){ return it.str.indexOf("Semana ")===0; });
+    if(!semanaItem) return [];
+    var m = semanaItem.str.match(/Semana (\d{2}\/\d{2}\/\d{4})/);
+    if(!m) return [];
+    var weekStartStr = m[1];
+
+    var dayHeaders = items.filter(function(it){ return DAY_NAMES_ES.indexOf(it.str.trim())!==-1; })
+      .map(function(it){ return {day: it.str.trim(), x: it.x}; });
+    if(dayHeaders.length===0) return [];
+
+    function nearestDay(x){
+      var best=null, bestd=Infinity;
+      dayHeaders.forEach(function(h){ var d=Math.abs(h.x-x); if(d<bestd){bestd=d; best=h.day;} });
+      return best;
+    }
+
+    var contentItems = items.filter(function(it){
+      if(it.str.indexOf("Semana ")===0) return false;
+      if(DAY_NAMES_ES.indexOf(it.str.trim())!==-1) return false;
+      if(Math.abs(it.x-25.2)<1) return false;
+      if(it.y < 100) return false;
+      if(/^\d+\s*\/\s*\d+$/.test(it.str.trim())) return false;
+      return true;
+    });
+
+    var events = [];
+    var block = {titleLines:[], room:null, subgrupo:null, parcial:null, x:null};
+    contentItems.forEach(function(it){
+      if(block.x===null) block.x = it.x;
+      var s = it.str.trim();
+      if(TIME_RANGE_RE.test(s)){
+        var parts = s.split(/[\u2013-]/);
+        var start = parts[0].trim(), end = parts[1].trim();
+        var title = block.titleLines.join(" ").trim();
+        var day = nearestDay(block.x);
+        var dayIdx = DAY_NAMES_ES.indexOf(day);
+        var dateISO = pdfAddDays(weekStartStr, dayIdx);
+        var isExam = !!block.parcial;
+        var kind = block.subgrupo ? "practica" : "clase";
+        events.push({
+          id: "pdf"+events.length+"_"+dateISO+"_"+Math.random().toString(36).slice(2,6),
+          date: dateISO, title: title, start: start, end: end,
+          type: isExam ? "examen" : kind,
+          group: block.subgrupo || null,
+          room: block.room || ""
+        });
+        block = {titleLines:[], room:null, subgrupo:null, parcial:null, x:null};
+      } else {
+        classifyPdfLine(s, block);
+      }
+    });
+    return events;
+  }
+
+  async function parseSchedulePdf(file){
+    var pdfjsLib = await loadPdfJs();
+    var buf = await file.arrayBuffer();
+    var doc = await pdfjsLib.getDocument({data: buf}).promise;
+    var all = [];
+    for(var p=1; p<=doc.numPages; p++){
+      var page = await doc.getPage(p);
+      var evs = await parsePdfPage(page);
+      all = all.concat(evs);
+    }
+    return all;
+  }
+
+  document.getElementById("btnImportPdfTrigger").addEventListener("click", function(){
+    document.getElementById("importPdfFile").click();
+  });
+  document.getElementById("importPdfFile").addEventListener("change", function(ev){
+    var file = ev.target.files[0];
+    if(!file) return;
+    var statusEl = document.getElementById("pdfImportStatus");
+    statusEl.textContent = "Leyendo el PDF…";
+    parseSchedulePdf(file).then(function(events){
+      if(events.length===0){
+        statusEl.textContent = "No se ha podido leer ninguna sesión de ese PDF. Puede que el formato sea distinto al esperado.";
+        return;
+      }
+      state.masterEvents = events;
+      save();
+
+      var existingNames = state.subjects.map(function(s){ return s.name.toLowerCase(); });
+      var newNames = [];
+      events.forEach(function(e){
+        if(e.type==="examen" && e.room==="") return;
+        var key = e.title.toLowerCase();
+        if(key && existingNames.indexOf(key)===-1 && newNames.indexOf(e.title)===-1){
+          newNames.push(e.title);
+        }
+      });
+      newNames.forEach(function(name, i){
+        state.subjects.push({id:"s"+Date.now()+i, name:name, colorHex: SWATCH_COLORS[i % SWATCH_COLORS.length], target:40, done:0});
+        existingNames.push(name.toLowerCase());
+      });
+      save();
+
+      var examCount = events.filter(function(e){return e.type==="examen";}).length;
+      statusEl.textContent = "✓ Horario importado: "+events.length+" sesiones, "+examCount+" exámenes"+(newNames.length? ", "+newNames.length+" asignatura(s) nueva(s) añadida(s)":"")+".";
+      document.getElementById("btnRestoreDefaultSchedule").style.display = "block";
+      renderAll(); renderSubjects();
+      toast("Horario actualizado desde el PDF ✓");
+    }).catch(function(err){
+      statusEl.textContent = "Error leyendo el PDF: " + err.message;
+    });
+  });
+  document.getElementById("btnRestoreDefaultSchedule").addEventListener("click", function(){
+    delete state.masterEvents;
+    save(); renderAll();
+    document.getElementById("pdfImportStatus").textContent = "Se restauró el horario original.";
+    document.getElementById("btnRestoreDefaultSchedule").style.display = "none";
+    toast("Horario original restaurado");
+  });
+  if(state.masterEvents && state.masterEvents.length){
+    document.getElementById("btnRestoreDefaultSchedule").style.display = "block";
+  }
+
+  /* ---------------- PWA install ---------------- */
+  var deferredPrompt = null;
+  window.addEventListener("beforeinstallprompt", function(e){
+    e.preventDefault(); deferredPrompt = e;
+  });
+  document.getElementById("btnInstall").addEventListener("click", function(){
+    if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt = null; }
+    else { toast("Usa el menú del navegador → \"Añadir a pantalla de inicio\""); }
+  });
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", function(){
+      navigator.serviceWorker.register("sw.js").catch(function(){});
+    });
+  }
+
+  /* ---------------- OVERLAY HELPERS ---------------- */
+  function showOverlay(id){ document.getElementById(id).classList.add("show"); }
+  function hideOverlay(id){ document.getElementById(id).classList.remove("show"); }
+  document.querySelectorAll(".overlay").forEach(function(ov){
+    ov.addEventListener("click", function(e){ if(e.target===ov) ov.classList.remove("show"); });
+  });
+  document.querySelectorAll("[data-close]").forEach(function(btn){
+    btn.addEventListener("click", function(){ btn.closest(".overlay").classList.remove("show"); });
+  });
+
+  /* ---------------- MASTER RENDER ---------------- */
+  function renderAll(){
+    renderStreakCalendar(); renderSubjects(); renderExams(); renderDeadlines(); renderSubjectGroupList(); renderConflictBanner();
+    if(document.getElementById("panel-horario").classList.contains("active")) renderHorario();
+    if(document.getElementById("panel-calendario").classList.contains("active")) renderCalendar();
+  }
+
+  /* ---------------- SYNC (Supabase) ---------------- */
+  var SYNC_CONFIG_KEY = "bitacoraSyncConfig_v1";
+  var syncConfig = null;
+  var supabaseClient = null;
+  var syncChannel = null;
+  var sessionsChannel = null;
+  var syncPushTimer = null;
+  var applyingRemote = false;
+
+  function loadSyncConfig(){
+    try{ var raw = localStorage.getItem(SYNC_CONFIG_KEY); return raw ? JSON.parse(raw) : null; }
+    catch(e){ return null; }
+  }
+  function saveSyncConfig(cfg){ localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify(cfg)); }
+  function setSyncStatus(msg){ var el = document.getElementById("syncStatus"); if(el) el.textContent = msg; }
+
+  function loadSupabaseLib(){
+    if(window.supabase) return Promise.resolve(window.supabase);
+    return new Promise(function(resolve, reject){
+      var s = document.createElement("script");
+      s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js";
+      s.onload = function(){ resolve(window.supabase); };
+      s.onerror = function(){ reject(new Error("No se pudo cargar la librería")); };
+      document.head.appendChild(s);
+    });
+  }
+
+  function applyStateAndRender(){
+    document.documentElement.setAttribute("data-palette", state.palette);
+    document.body.setAttribute("data-palette", state.palette);
+    renderAll(); renderPaletteList(); renderGroupPick();
+    document.getElementById("dailyStudyMin").value = state.dailyStudyMin;
+    if(document.getElementById("panel-asignaturas").classList.contains("active")) renderAsignaturas();
+  }
+
+  var pendingFirstConnect = false;
+  var pendingRemoteRow = null;
+  function initSync(cfg){
+    syncConfig = cfg;
+    pendingFirstConnect = true;
+    setSyncStatus("Conectando…");
+    loadSupabaseLib().then(function(sb){
+      supabaseClient = sb.createClient(cfg.url, cfg.key);
+      document.getElementById("btnSyncDisconnect").style.display = "block";
+      pullRemoteState();
+      subscribeSync();
+      pullSessions();
+      subscribeSessions();
+    }).catch(function(){
+      setSyncStatus("No se pudo cargar la librería de Supabase. Revisa tu conexión.");
+    });
+  }
+
+  function applyRemoteRow(row){
+    var remoteUpdated = new Date(row.updated_at).getTime();
+    var localUpdated = state.__syncUpdated || 0;
+    if(remoteUpdated > localUpdated){
+      applyingRemote = true;
+      state = row.data;
+      state.__syncUpdated = remoteUpdated;
+      save(false);
+      applyStateAndRender();
+      applyingRemote = false;
+      pullSessions();
+    }
+    setSyncStatus("Sincronizado ✓ (" + new Date(remoteUpdated).toLocaleString("es-ES") + ")");
+  }
+
+  function pullRemoteState(){
+    if(!supabaseClient) return;
+    supabaseClient.from("bitacora_sync").select("*").eq("room_code", syncConfig.room).maybeSingle()
+      .then(function(res){
+        if(res.error){ setSyncStatus("Error al sincronizar: " + res.error.message); return; }
+        if(res.data && res.data.data){
+          if(pendingFirstConnect){
+            pendingFirstConnect = false;
+            pendingRemoteRow = res.data;
+            setSyncStatus("Elige qué datos quieres mantener…");
+            showOverlay("overlaySyncChoice");
+            return;
+          }
+          applyRemoteRow(res.data);
+        } else {
+          pendingFirstConnect = false;
+          pushRemoteState();
+        }
+      });
+  }
+  document.getElementById("btnSyncUseCloud").addEventListener("click", function(){
+    hideOverlay("overlaySyncChoice");
+    if(pendingRemoteRow){ applyRemoteRow(pendingRemoteRow); pendingRemoteRow = null; }
+  });
+  document.getElementById("btnSyncUseDevice").addEventListener("click", function(){
+    hideOverlay("overlaySyncChoice");
+    pendingRemoteRow = null;
+    pushRemoteState();
+    toast("Usando los datos de este dispositivo ✓");
+  });
+  document.getElementById("btnSyncChoiceClose").addEventListener("click", function(){
+    hideOverlay("overlaySyncChoice");
+    pendingRemoteRow = null;
+    localStorage.removeItem(SYNC_CONFIG_KEY);
+    if(syncChannel && supabaseClient) supabaseClient.removeChannel(syncChannel);
+    if(sessionsChannel && supabaseClient) supabaseClient.removeChannel(sessionsChannel);
+    syncConfig = null; supabaseClient = null; syncChannel = null; sessionsChannel = null;
+    document.getElementById("btnSyncDisconnect").style.display = "none";
+    setSyncStatus("Conexión cancelada. Tus datos de este dispositivo no se han tocado.");
+  });
+
+  function pushRemoteState(){
+    if(!supabaseClient || applyingRemote) return;
+    var now = Date.now();
+    state.__syncUpdated = now;
+    supabaseClient.from("bitacora_sync").upsert({room_code: syncConfig.room, data: state, updated_at: new Date(now).toISOString()})
+      .then(function(res){
+        if(res.error) setSyncStatus("Error al guardar en la nube: " + res.error.message);
+        else setSyncStatus("Sincronizado ✓");
+      });
+  }
+
+  function subscribeSync(){
+    if(syncChannel && supabaseClient) supabaseClient.removeChannel(syncChannel);
+    syncChannel = supabaseClient.channel("bitacora_sync_" + syncConfig.room)
+      .on("postgres_changes", {event: "*", schema: "public", table: "bitacora_sync", filter: "room_code=eq." + syncConfig.room}, function(payload){
+        if(!payload.new || !payload.new.data) return;
+        var remoteUpdated = new Date(payload.new.updated_at).getTime();
+        if(remoteUpdated <= (state.__syncUpdated || 0)) return;
+        applyingRemote = true;
+        state = payload.new.data;
+        state.__syncUpdated = remoteUpdated;
+        save(false);
+        applyStateAndRender();
+        applyingRemote = false;
+        pullSessions();
+        setSyncStatus("Actualizado desde otro dispositivo ✓");
+      })
+      .subscribe();
+  }
+
+  function pullSessions(){
+    if(!supabaseClient) return;
+    supabaseClient.from("bitacora_sessions").select("*").eq("room_code", syncConfig.room).order("created_at", {ascending:true})
+      .then(function(res){
+        if(res.error){ setSyncStatus("Error al leer sesiones: " + res.error.message); return; }
+        state.sessionLog = (res.data||[]).map(function(r){
+          return {id:"srv_"+r.id, subjectId:r.subject_id, minutes:Number(r.minutes), date:r.occurred_on};
+        });
+        save(false);
+        renderAll();
+      });
+  }
+  function subscribeSessions(){
+    if(sessionsChannel && supabaseClient) supabaseClient.removeChannel(sessionsChannel);
+    sessionsChannel = supabaseClient.channel("bitacora_sessions_" + syncConfig.room)
+      .on("postgres_changes", {event: "INSERT", schema: "public", table: "bitacora_sessions", filter: "room_code=eq." + syncConfig.room}, function(){
+        pullSessions();
+      })
+      .subscribe();
+  }
+  var _baseSave = save;
+  save = function(shouldPush){
+    _baseSave();
+    if(syncConfig && supabaseClient && !applyingRemote && shouldPush !== false){
+      clearTimeout(syncPushTimer);
+      syncPushTimer = setTimeout(pushRemoteState, 700);
+    }
+  };
+
+  document.getElementById("btnSyncConnect").addEventListener("click", function(){
+    var url = document.getElementById("syncUrl").value.trim();
+    var key = document.getElementById("syncKey").value.trim();
+    var room = document.getElementById("syncRoom").value.trim();
+    if(!url || !key || !room){ setSyncStatus("Rellena los tres campos."); return; }
+    var cfg = {url: url, key: key, room: room};
+    saveSyncConfig(cfg);
+    initSync(cfg);
+  });
+  document.getElementById("btnSyncDisconnect").addEventListener("click", function(){
+    localStorage.removeItem(SYNC_CONFIG_KEY);
+    if(syncChannel && supabaseClient) supabaseClient.removeChannel(syncChannel);
+    syncConfig = null; supabaseClient = null; syncChannel = null;
+    document.getElementById("btnSyncDisconnect").style.display = "none";
+    setSyncStatus("Sincronización desconectada. Los datos vuelven a guardarse solo en este dispositivo.");
+  });
+
+  renderCalendarDow();
+  renderAll();
+  renderPaletteList();
+  renderGroupPick();
+  document.getElementById("dailyStudyMin").value = state.dailyStudyMin;
+
+  var existingSyncCfg = loadSyncConfig();
+  if(existingSyncCfg){
+    document.getElementById("syncUrl").value = existingSyncCfg.url;
+    document.getElementById("syncKey").value = existingSyncCfg.key;
+    document.getElementById("syncRoom").value = existingSyncCfg.room;
+    initSync(existingSyncCfg);
+  }
+
+})();
+</script>
+</body>
+</html>
+  button:focus-visible,[tabindex]:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ink); outline-offset:2px;}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important;}}
+
+  .wrap{max-width:880px; margin:0 auto; padding:20px 18px 0;}
+  header.top{display:flex; align-items:center; gap:14px; justify-content:space-between; padding:6px 0 18px;}
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand h1{font-size:1.5rem;}
+  .brand .sub{font-size:.78rem; color:var(--ink-soft); margin-top:2px;}
+  .logo{width:44px; height:44px; flex:none;}
+  .top-actions{display:flex; gap:8px;}
+  .icon-btn{width:42px; height:42px; border-radius:var(--r-pill); border:1px solid var(--line); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:var(--shadow);}
+  .icon-btn svg{width:20px; height:20px;}
+
+  .card{background:var(--surface); border-radius:var(--r-card); padding:20px; box-shadow:var(--shadow); margin-bottom:18px; border:1px solid var(--line);}
+  .card h2{font-size:1.05rem; margin-bottom:14px;}
+  .card h2 .muted{color:var(--ink-soft); font-weight:500; font-size:.8rem;}
+  .row-between{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+
+  /* streak */
+  .streak-hero{background:linear-gradient(135deg,var(--c1),var(--c2) 35%,var(--c3) 65%,var(--c4) 85%,var(--c5)); color:#fff;}
+  .streak-hero .count{font-size:3rem; line-height:1; font-family:'Fredoka'; font-weight:700;}
+  .streak-hero .count-label{font-size:.85rem; opacity:.92; margin-top:4px;}
+  .streak-top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:16px;}
+  .streak-note{max-width:280px; font-size:.85rem; opacity:.95;}
+  .streak-cal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+  .streak-cal-head .m-label{font-family:'Fredoka'; font-weight:600; font-size:.9rem; text-transform:capitalize; opacity:.95;}
+  .streak-cal-nav{display:flex; gap:4px;}
+  .streak-cal-nav button{width:26px; height:26px; border-radius:50%; border:1px solid rgba(255,255,255,.4); background:rgba(255,255,255,.12); color:#fff; cursor:pointer; font-size:.8rem;}
+  .streak-cal-dow{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:4px;}
+  .streak-cal-dow span{font-size:.6rem; text-align:center; opacity:.8; font-weight:600;}
+  .streak-cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:4px;}
+  .streak-cell{aspect-ratio:1/1; border-radius:8px; border:none; background:rgba(255,255,255,.14); color:#fff; font-size:.62rem; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; position:relative;}
+  .streak-cell.empty{visibility:hidden; cursor:default;}
+  .streak-cell.today{box-shadow:0 0 0 2px #fff;}
+  .streak-cell.future{opacity:.32; cursor:not-allowed;}
+  .streak-cell.star{font-size:.85rem;}
+  .legend{display:flex; align-items:center; gap:6px; font-size:.72rem; opacity:.9; margin-top:10px;}
+  .legend .bead{width:11px; height:11px; border-radius:50%; background:rgba(255,255,255,.28);}
+  .legend .bead.lvl1{background:rgba(255,255,255,.45);} .legend .bead.lvl2{background:rgba(255,255,255,.65);}
+  .legend .bead.lvl3{background:rgba(255,255,255,.85);} .legend .bead.lvl4{background:#fff;}
+
+  /* subjects */
+  .subject{display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--line);}
+  .subject:last-child{border-bottom:none; padding-bottom:0;}
+  .subj-dot{width:34px; height:34px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; color:#fff; font-family:'Fredoka'; font-size:.85rem; font-weight:600;}
+  .subj-main{flex:1; min-width:0;}
+  .subj-name-row{display:flex; align-items:baseline; justify-content:space-between; gap:8px;}
+  .subj-name{font-weight:600; font-size:.92rem;}
+  .subj-hours{font-size:.78rem; color:var(--ink-soft); flex:none; font-variant-numeric:tabular-nums;}
+  .beadbar{display:flex; gap:3px; margin-top:7px;}
+  .beadbar .seg{height:9px; flex:1; border-radius:5px; background:var(--surface-soft); overflow:hidden;}
+  .beadbar .seg i{display:block; height:100%; width:0%; border-radius:5px;}
+  .subj-edit-btn{background:none; border:none; cursor:pointer; color:var(--ink-soft); flex:none; padding:6px;}
+  .subj-edit-btn svg{width:16px; height:16px;}
+  .add-subject-btn,.ghost-btn{width:100%; border:1.5px dashed var(--line); background:transparent; color:var(--ink-soft); border-radius:14px; padding:11px; font-size:.85rem; cursor:pointer; margin-top:12px; font-weight:600;}
+  .add-subject-btn:hover,.ghost-btn:hover{border-color:var(--c2); color:var(--c2);}
+
+  /* exams */
+  .exam-row{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line);}
+  .exam-row:last-child{border-bottom:none;}
+  .exam-days{width:52px; height:52px; border-radius:16px; background:var(--surface-soft); flex:none; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--c1);}
+  .exam-days b{font-family:'Fredoka'; font-size:1.05rem; line-height:1;}
+  .exam-days span{font-size:.55rem; text-transform:uppercase; letter-spacing:.3px; margin-top:1px;}
+  .exam-main{flex:1;}
+  .exam-name{font-weight:600; font-size:.9rem;}
+  .exam-date{font-size:.78rem; color:var(--ink-soft);}
+  .plan-empty{color:var(--ink-soft); font-size:.85rem; padding:6px 0;}
+
+  /* horario tab */
+  .day-nav{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;}
+  .day-nav .navbtns{display:flex; gap:6px;}
+  .day-nav button{width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:var(--surface-soft); cursor:pointer;}
+  .day-label{font-family:'Fredoka'; font-weight:600; font-size:1.05rem; text-transform:capitalize;}
+  .today-jump{font-size:.72rem; color:var(--c2); background:none; border:none; cursor:pointer; font-weight:600; text-decoration:underline; padding:0;}
+  .banner{border-radius:14px; padding:12px 14px; font-size:.85rem; font-weight:600; margin:10px 0 4px; display:flex; align-items:center; gap:8px;}
+  .banner.exam{background:#FBE4E1; color:#8E1B1B;}
+  .banner.fiesta{background:#FDF0D6; color:#7A5A17;}
+  .banner.done{background:#E7F0DC; color:#43602A;}
+  .section-label{font-size:.72rem; text-transform:uppercase; letter-spacing:.5px; color:var(--ink-soft); font-weight:700; margin:18px 0 8px;}
+  .section-label:first-of-type{margin-top:4px;}
+  .item-row{display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid var(--line);}
+  .item-row:last-child{border-bottom:none;}
+  .item-time{font-family:'Fredoka'; font-weight:600; font-size:.8rem; color:var(--ink-soft); width:92px; flex:none;}
+  .item-dot{width:10px; height:10px; border-radius:50%; flex:none;}
+  .item-title{flex:1; font-size:.89rem;}
+  .item-tag{font-size:.65rem; color:var(--ink-soft); background:var(--surface-soft); border-radius:var(--r-pill); padding:2px 8px; flex:none;}
+  .study-row{display:flex; align-items:center; gap:10px; padding:8px 0;}
+  .study-name{flex:1; font-size:.88rem; font-weight:600;}
+  .study-min{font-family:'Fredoka'; font-size:.85rem; font-weight:600; color:var(--ink-soft);}
+
+  /* calendar */
+  .cal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+  .cal-head .month-label{font-family:'Fredoka'; font-weight:600; font-size:1.05rem; text-transform:capitalize;}
+  .cal-nav{display:flex; gap:6px;}
+  .cal-nav button{width:32px; height:32px; border-radius:50%; border:1px solid var(--line); background:var(--surface-soft); cursor:pointer;}
+  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
+  .cal-dow{font-size:.65rem; text-align:center; color:var(--ink-soft); font-weight:600; text-transform:uppercase; padding-bottom:4px;}
+  .cal-cell{aspect-ratio:1/1; border-radius:10px; border:1px solid var(--line); background:var(--surface-soft); padding:5px; cursor:pointer; position:relative; display:flex; flex-direction:column; overflow:hidden;}
+  .cal-cell.empty{visibility:hidden;}
+  .cal-cell.today{border:2px solid var(--c2);}
+  .cal-cell .dnum{font-size:.72rem; font-weight:600;}
+  .cal-dots{display:flex; gap:2px; flex-wrap:wrap; margin-top:auto;}
+  .cal-dots i{width:6px; height:6px; border-radius:50%; display:block;}
+  .cal-cell:hover{background:#fff;}
+
+  /* ajustes */
+  .settings-block{margin-bottom:22px;}
+  .settings-block:last-child{margin-bottom:0;}
+  .settings-title{font-size:.95rem; font-weight:600; margin-bottom:4px;}
+  .settings-desc{font-size:.78rem; color:var(--ink-soft); margin-bottom:10px;}
+  .group-pick{display:flex; gap:8px; flex-wrap:wrap;}
+  .group-pick button{border:1.5px solid var(--line); background:var(--surface-soft); border-radius:14px; padding:10px 16px; font-size:.85rem; cursor:pointer; font-weight:600; color:var(--ink-soft); flex:1; min-width:70px;}
+  .group-pick button.active{color:#fff; background:var(--c2); border-color:var(--c2);}
+  .checkbox-row{display:flex; align-items:center; gap:10px; margin-top:10px; font-size:.83rem;}
+  .checkbox-row input{width:18px; height:18px;}
+
+  /* tabs */
+  .tabbar{position:fixed; left:0; right:0; bottom:0; background:var(--surface); border-top:1px solid var(--line); display:flex; z-index:40; padding-bottom:env(safe-area-inset-bottom);}
+  .tabbtn{flex:1; border:none; background:none; padding:10px 4px 8px; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; color:var(--ink-soft); font-size:.65rem; font-weight:600;}
+  .tabbtn svg{width:22px; height:22px;}
+  .tabbtn.active{color:var(--c2);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  /* modals */
+  .overlay{position:fixed; inset:0; background:rgba(58,35,24,.45); display:none; align-items:flex-end; justify-content:center; z-index:50;}
+  .overlay.show{display:flex;}
+  @media (min-width:640px){.overlay{align-items:center;}}
+  .modal{background:var(--surface); width:100%; max-width:480px; border-radius:22px 22px 0 0; padding:22px; max-height:88vh; overflow-y:auto; box-shadow:0 -10px 40px rgba(0,0,0,.25);}
+  @media (min-width:640px){.modal{border-radius:22px;}}
+  .modal h3{font-size:1.1rem; margin-bottom:16px;}
+  .modal .row-between{margin-bottom:16px;}
+  .close-x{background:none; border:none; cursor:pointer; color:var(--ink-soft); padding:4px;}
+  .close-x svg{width:22px; height:22px;}
+  label{display:block; font-size:.75rem; font-weight:600; color:var(--ink-soft); margin:12px 0 5px;}
+  label:first-of-type{margin-top:0;}
+  input[type=text],input[type=number],input[type=date],input[type=time],select{width:100%; padding:11px 12px; border-radius:12px; border:1.5px solid var(--line); font-family:'Work Sans'; font-size:.9rem; background:var(--surface-soft); color:var(--ink);}
+  .field-row{display:flex; gap:10px;}
+  .field-row > div{flex:1;}
+  .swatches{display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;}
+  .swatch{width:30px; height:30px; border-radius:50%; cursor:pointer; border:2px solid transparent;}
+  .swatch.active{border-color:var(--ink);}
+  .type-pick{display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;}
+  .type-pick button{border:1.5px solid var(--line); background:var(--surface-soft); border-radius:var(--r-pill); padding:7px 13px; font-size:.78rem; cursor:pointer; font-weight:600; color:var(--ink-soft);}
+  .type-pick button.active{color:#fff; border-color:transparent;}
+  .primary-btn{width:100%; padding:13px; border-radius:14px; border:none; background:var(--ink); color:#fff; font-weight:600; font-size:.9rem; cursor:pointer; margin-top:18px;}
+  .danger-btn{width:100%; padding:11px; border-radius:14px; border:1.5px solid #C1272D; background:transparent; color:#C1272D; font-weight:600; font-size:.82rem; cursor:pointer; margin-top:10px;}
+  .day-events{margin-top:4px;}
+  .day-event-row{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); cursor:pointer;}
+  .day-event-row .del{background:none; border:none; cursor:pointer; color:var(--ink-soft);}
+  .day-event-row .del svg{width:16px; height:16px;}
+  .day-event-info{flex:1;}
+  .day-event-info .t{font-size:.85rem; font-weight:600;}
+  .day-event-info .m{font-size:.72rem; color:var(--ink-soft);}
+  .palette-opt{display:flex; align-items:center; gap:12px; padding:12px; border-radius:14px; border:1.5px solid var(--line); cursor:pointer; margin-bottom:10px;}
+  .palette-opt.active{border-color:var(--ink); background:var(--surface-soft);}
+  .palette-strip{display:flex; height:26px; border-radius:8px; overflow:hidden; flex:1;}
+  .palette-strip div{flex:1;}
+  .palette-name{font-size:.8rem; font-weight:600; width:150px; flex:none;}
+  .toast{position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:11px 20px; border-radius:var(--r-pill); font-size:.82rem; z-index:60; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
+  footer.credit{text-align:center; font-size:.72rem; color:var(--ink-soft); padding:24px 0 6px;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true">
+        <defs><linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="var(--c1)"/><stop offset="35%" stop-color="var(--c2)"/>
+          <stop offset="65%" stop-color="var(--c3)"/><stop offset="100%" stop-color="var(--c5)"/>
+        </linearGradient></defs>
+        <circle cx="50" cy="50" r="47" fill="url(#logoGrad)"/>
+        <g fill="#fff" opacity=".95">
+          <circle cx="27" cy="34" r="6"/><circle cx="46" cy="26" r="6"/><circle cx="65" cy="30" r="6"/>
+          <circle cx="76" cy="46" r="6"/><circle cx="73" cy="66" r="6"/><circle cx="56" cy="76" r="6"/>
+          <circle cx="36" cy="72" r="6"/><circle cx="22" cy="54" r="6"/>
+        </g>
+        <circle cx="50" cy="50" r="17" fill="#fff"/><circle cx="50" cy="50" r="10" fill="var(--c2)"/>
+      </svg>
+      <div><h1>Bitácora</h1><div class="sub" id="headerSub">estudio · trabajo · horario</div></div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="btnLog" title="Registrar sesión" aria-label="Registrar sesión">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= TAB: INICIO ================= -->
+  <section class="tab-panel active" id="panel-inicio">
+    <div class="card streak-hero">
+      <div class="streak-top">
+        <div><div class="count" id="streakCount">0</div><div class="count-label">días de racha sin saltarte el plan</div></div>
+        <div class="streak-note">Se rellena solo con lo que registres en "Registrar sesión". Toca un día para corregirlo a mano.</div>
+      </div>
+      <div class="streak-cal-head">
+        <button class="streak-cal-nav" id="streakPrevMonth" aria-label="Mes anterior" style="width:auto;">‹</button>
+        <div class="m-label" id="streakMonthLabel"></div>
+        <button class="streak-cal-nav" id="streakNextMonth" aria-label="Mes siguiente" style="width:auto;">›</button>
+      </div>
+      <div class="streak-cal-dow"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+      <div class="streak-cal-grid" id="streakCalGrid"></div>
+      <div class="legend"><span>menos</span><span class="bead"></span><span class="bead lvl1"></span><span class="bead lvl2"></span><span class="bead lvl3"></span><span class="bead lvl4"></span><span>más</span><span style="margin-left:6px;">⭐ +6h</span></div>
+    </div>
+
+    <div class="card">
+      <div class="row-between"><h2>Mis asignaturas <span class="muted">horas por delante</span></h2></div>
+      <div id="subjectsList"></div>
+      <button class="add-subject-btn" id="btnAddSubject">+ añadir asignatura</button>
+    </div>
+
+    <div class="card">
+      <h2>Próximos exámenes</h2>
+      <div id="examsList"></div>
+    </div>
+
+    <div class="card">
+      <div class="row-between"><h2>Próximas entregas <span class="muted">prácticas, trabajos...</span></h2></div>
+      <div id="deadlinesList"></div>
+      <button class="add-subject-btn" id="btnAddDeadline">+ añadir fecha límite</button>
+    </div>
+  </section>
+
+  <!-- ================= TAB: HORARIO ================= -->
+  <section class="tab-panel" id="panel-horario">
+    <div class="card">
+      <div class="day-nav">
+        <button class="today-jump" id="jumpToday">hoy</button>
+        <div class="day-label" id="dayLabel"></div>
+        <div class="navbtns">
+          <button id="prevDay" aria-label="Día anterior">‹</button>
+          <button id="nextDay" aria-label="Día siguiente">›</button>
+        </div>
+      </div>
+      <div id="dayBanner"></div>
+
+      <div class="section-label">Clases</div>
+      <div id="horClases"></div>
+
+      <div class="section-label">Prácticas</div>
+      <div id="horPracticas"></div>
+
+      <div class="section-label">Otros eventos tuyos</div>
+      <div id="horOtros"></div>
+
+      <div class="section-label">Deberías estudiar hoy</div>
+      <div id="horEstudio"></div>
+    </div>
+  </section>
+
+  <!-- ================= TAB: CALENDARIO ================= -->
+  <section class="tab-panel" id="panel-calendario">
+    <div class="card">
+      <div class="cal-head">
+        <div class="month-label" id="monthLabel"></div>
+        <div class="cal-nav"><button id="prevMonth" aria-label="Mes anterior">‹</button><button id="nextMonth" aria-label="Mes siguiente">›</button></div>
+      </div>
+      <div class="cal-grid" id="calDow"></div>
+      <div class="cal-grid" id="calGrid" style="margin-top:5px;"></div>
+    </div>
+  </section>
+
+  <!-- ================= TAB: ASIGNATURAS ================= -->
+  <section class="tab-panel" id="panel-asignaturas">
+    <div id="coordinatorCard"></div>
+    <div id="asignaturasList"></div>
+  </section>
+
+  <!-- ================= TAB: AJUSTES ================= -->
+  <section class="tab-panel" id="panel-ajustes">
+    <div class="card">
+      <div class="settings-block">
+        <div class="settings-title">Grupo de prácticas</div>
+        <div class="settings-desc">Grupo general, se aplica a todas las asignaturas salvo que cambies alguna abajo.</div>
+        <div class="group-pick" id="groupPick">
+          <button data-g="1">Grupo 1</button><button data-g="2">Grupo 2</button><button data-g="3">Grupo 3</button>
+        </div>
+        <div class="settings-desc" style="margin-top:14px;">Cada asignatura reparte sus propios subgrupos, así que lo normal es que no coincidan entre sí. Ajusta aquí el subgrupo real de cada una:</div>
+        <div id="subjectGroupList"></div>
+        <div id="groupConflicts"></div>
+      </div>
+
+      <div class="settings-block">
+        <div class="settings-title">Actualizar horario desde un PDF</div>
+        <div class="settings-desc">Sube el PDF de horarios.upct.es (o el que te pase la facultad, mismo formato) y la app rehace sola todas las clases, prácticas y exámenes de todo el curso, con fechas reales. Se sustituye el horario que tenías cargado.</div>
+        <button class="ghost-btn" id="btnImportPdfTrigger">📄 subir PDF de horario</button>
+        <input type="file" id="importPdfFile" accept="application/pdf" style="display:none">
+        <div id="pdfImportStatus" style="font-size:.78rem; color:var(--ink-soft); margin-top:8px;"></div>
+        <button class="ghost-btn" id="btnRestoreDefaultSchedule" style="display:none">↺ volver al horario original</button>
+      </div>
+
+      <div class="settings-block">
+        <div class="settings-title">Objetivo de estudio diario</div>
+        <div class="settings-desc">Minutos totales que quieres repartir entre asignaturas en un día normal.</div>
+        <input type="number" id="dailyStudyMin" min="0" step="10">
+      </div>
+
+      <div class="settings-block">
+        <div class="settings-title">Paleta de color</div>
+        <div id="paletteList"></div>
+      </div>
+
+      <div class="settings-block">
+        <div class="settings-title">Instalar como app</div>
+        <div class="settings-desc">Ábrela desde tu enlace de GitHub Pages (no vale abrir el archivo suelto) y pulsa este botón para añadirla a tu pantalla de inicio como un icono propio. En iPhone: botón compartir → "Añadir a pantalla de inicio". No existe un widget en vivo sin app nativa, pero esto te deja un acceso directo que abre la app al instante y funciona sin conexión.</div>
+        <button class="ghost-btn" id="btnInstall">📲 instalar en este dispositivo</button>
+      </div>
+
+      <div class="settings-block">
+        <div class="settings-title">Sincronizar entre dispositivos</div>
+        <div class="settings-desc">Conecta esta app a tu propio proyecto gratuito de Supabase para que el progreso de estudio, la racha, los eventos que añadas a mano, etc. se compartan automáticamente entre varios móviles/personas que usen el mismo código. Los tres campos se guardan solo en este dispositivo.</div>
+        <input type="text" id="syncUrl" placeholder="URL del proyecto Supabase (https://xxxx.supabase.co)" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--line); margin-bottom:8px; font-family:inherit; font-size:.85rem;">
+        <input type="text" id="syncKey" placeholder="Clave anon/public de Supabase" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--line); margin-bottom:8px; font-family:inherit; font-size:.85rem;">
+        <input type="text" id="syncRoom" placeholder="Código de sincronización (inventa uno, ej: bitacora-marcos)" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--line); margin-bottom:8px; font-family:inherit; font-size:.85rem;">
+        <button class="ghost-btn" id="btnSyncConnect">🔗 conectar y sincronizar</button>
+        <button class="ghost-btn" id="btnSyncDisconnect" style="display:none">✂ desconectar sincronización</button>
+        <div id="syncStatus" style="font-size:.78rem; color:var(--ink-soft); margin-top:8px;"></div>
+      </div>
+
+      <div class="settings-block">
+        <div class="settings-title">Copia de seguridad</div>
+        <button class="ghost-btn" id="btnExport">⬇ exportar datos (.json)</button>
+        <button class="ghost-btn" id="btnImportTrigger">⬆ importar datos (.json)</button>
+        <input type="file" id="importFile" accept="application/json" style="display:none">
+      </div>
+
+      <div class="settings-block">
+        <button class="danger-btn" id="btnReset">borrar todos los datos y empezar de nuevo</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="credit">hecho a medida para tu cuatrimestre · datos guardados solo en este navegador</footer>
+</div>
+
+<!-- tab bar -->
+<nav class="tabbar">
+  <button class="tabbtn active" data-tab="inicio">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    Inicio
+  </button>
+  <button class="tabbtn" data-tab="horario">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+    Horario
+  </button>
+  <button class="tabbtn" data-tab="calendario">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    Calendario
+  </button>
+  <button class="tabbtn" data-tab="asignaturas">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    Asignaturas
+  </button>
+  <button class="tabbtn" data-tab="ajustes">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 0 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 0 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 0 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg>
+    Ajustes
+  </button>
+</nav>
+
+<!-- MODAL: add/edit subject -->
+<div class="overlay" id="overlaySubject">
+  <div class="modal">
+    <div class="row-between"><h3 id="subjModalTitle">Añadir asignatura</h3><button class="close-x" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <label>Nombre</label>
+    <input type="text" id="subjName" placeholder="p.ej. Ingeniería Térmica">
+    <label>Color</label>
+    <div class="swatches" id="subjSwatches"></div>
+    <div class="field-row">
+      <div><label>Horas objetivo</label><input type="number" id="subjTarget" min="0" value="60"></div>
+      <div><label>Horas ya hechas</label><input type="number" id="subjDone" min="0" value="0"></div>
+    </div>
+    <button class="primary-btn" id="btnSaveSubject">Guardar</button>
+    <button class="danger-btn" id="btnDeleteSubject" style="display:none">Eliminar asignatura</button>
+  </div>
+</div>
+
+<!-- MODAL: log session -->
+<div class="overlay" id="overlayLog">
+  <div class="modal">
+    <div class="row-between"><h3>Registrar sesión de hoy</h3><button class="close-x" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <label>Asignatura</label>
+    <select id="logSubject"></select>
+    <label>Minutos estudiados</label>
+    <input type="number" id="logMinutes" min="1" value="45">
+    <button class="primary-btn" id="btnSaveLog">Guardar sesión</button>
+  </div>
+</div>
+
+<!-- MODAL: quick add deadline -->
+<div class="overlay" id="overlayDeadline">
+  <div class="modal">
+    <div class="row-between"><h3 id="deadlineModalTitle">Añadir fecha límite</h3><button class="close-x" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <label>Qué es</label>
+    <input type="text" id="dlTitle" placeholder="p.ej. Entrega práctica 3 · Automatización">
+    <div class="field-row">
+      <div><label>Fecha</label><input type="date" id="dlDate"></div>
+      <div><label>Hora límite</label><input type="time" id="dlTime" value="23:59"></div>
+    </div>
+    <label>Asignatura (opcional)</label>
+    <select id="dlSubject"><option value="">— sin asignar —</option></select>
+    <button class="primary-btn" id="btnSaveDeadline">Guardar</button>
+    <button class="danger-btn" id="btnDeleteDeadline" style="display:none">Eliminar</button>
+  </div>
+</div>
+
+<!-- MODAL: day detail / add event (from calendario tab) -->
+<div class="overlay" id="overlayDay">
+  <div class="modal">
+    <div class="row-between"><h3 id="dayModalTitle">Día</h3><button class="close-x" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="section-label" style="margin-top:0">Automáticas (horario) <span class="muted" style="text-transform:none; font-weight:500;">(toca una para moverla o eliminarla)</span></div>
+    <div class="day-events" id="dayAutoList"></div>
+    <div id="masterEditForm" style="display:none; background:var(--surface-soft); border-radius:14px; padding:12px; margin:6px 0 10px;">
+      <div class="settings-desc" id="masterEditLabel" style="margin-bottom:8px; font-weight:600; color:var(--ink);"></div>
+      <label>Fecha</label>
+      <input type="date" id="mevDate">
+      <div class="field-row">
+        <div><label>Desde</label><input type="time" id="mevStart"></div>
+        <div><label>Hasta</label><input type="time" id="mevEnd"></div>
+      </div>
+      <button class="primary-btn" id="btnSaveMasterEdit">Guardar cambios</button>
+      <button class="ghost-btn" id="btnDeleteMasterOccurrence">Eliminar esta clase/práctica</button>
+      <button class="ghost-btn" id="btnRestoreMasterOccurrence" style="display:none">↺ restaurar original</button>
+      <button class="danger-btn" id="btnCancelMasterEdit">Cerrar</button>
+    </div>
+    <div class="section-label">Tuyos <span class="muted" style="text-transform:none; font-weight:500;">(toca uno para editarlo)</span></div>
+    <div class="day-events" id="dayEventsList"></div>
+
+    <label style="margin-top:18px;" id="evFormLabel">Añadir evento ese día</label>
+    <input type="text" id="evTitle" placeholder="Título (p.ej. tarde libre)">
+    <div class="field-row">
+      <div><label>Desde</label><input type="time" id="evStart" value="09:00"></div>
+      <div><label>Hasta</label><input type="time" id="evEnd" value="10:00"></div>
+    </div>
+    <label>Tipo</label>
+    <div class="type-pick" id="evTypePick">
+      <button type="button" data-type="trabajo" style="background:var(--type-trabajo)">trabajo</button>
+      <button type="button" data-type="estudio" style="background:var(--type-estudio)">estudio</button>
+      <button type="button" data-type="entrega" style="background:var(--type-entrega)">entrega</button>
+      <button type="button" data-type="otro" style="background:var(--type-otro)">otro</button>
+    </div>
+    <button class="primary-btn" id="btnAddEvent">Añadir evento</button>
+    <button class="danger-btn" id="btnCancelEditEvent" style="display:none">Cancelar edición</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- MODAL: edit total study minutes for a day (streak calendar) -->
+<div class="overlay" id="overlayStreakDay">
+  <div class="modal">
+    <div class="row-between"><h3 id="streakDayTitle">Día</h3><button class="close-x" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <label>Minutos totales estudiados ese día</label>
+    <input type="number" id="streakDayMinutes" min="0" step="5">
+    <button class="primary-btn" id="btnSaveStreakDay">Guardar</button>
+    <button class="danger-btn" id="btnClearStreakDay">Poner a cero</button>
+  </div>
+</div>
+
 <script>
 var DEFAULT_MASTER_EVENTS = [{"id": "auto1", "date": "2026-09-07", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto2", "date": "2026-09-07", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto3", "date": "2026-09-08", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto4", "date": "2026-09-08", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto5", "date": "2026-09-09", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto6", "date": "2026-09-09", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto7", "date": "2026-09-10", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto8", "date": "2026-09-10", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto9", "date": "2026-09-11", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto10", "date": "2026-09-11", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto11", "date": "2026-09-14", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto12", "date": "2026-09-14", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto13", "date": "2026-09-14", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto14", "date": "2026-09-15", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto15", "date": "2026-09-15", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto16", "date": "2026-09-15", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto17", "date": "2026-09-16", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto18", "date": "2026-09-16", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto19", "date": "2026-09-16", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto20", "date": "2026-09-17", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto21", "date": "2026-09-17", "title": "Ingeniería Térmica", "start": "11:10", "end": "14:00", "type": "practica", "group": "1", "subject": "s1", "room": "LAB"}, {"id": "auto22", "date": "2026-09-18", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto23", "date": "2026-09-18", "title": "Ingeniería Térmica", "start": "11:10", "end": "14:00", "type": "practica", "group": "2", "subject": "s1", "room": "LAB"}, {"id": "auto24", "date": "2026-09-21", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto25", "date": "2026-09-21", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto26", "date": "2026-09-21", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto27", "date": "2026-09-22", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto28", "date": "2026-09-22", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto29", "date": "2026-09-22", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto30", "date": "2026-09-23", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto31", "date": "2026-09-23", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto32", "date": "2026-09-23", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto33", "date": "2026-09-28", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto34", "date": "2026-09-28", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto35", "date": "2026-09-28", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto36", "date": "2026-09-29", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto37", "date": "2026-09-29", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto38", "date": "2026-09-29", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto39", "date": "2026-09-30", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto40", "date": "2026-09-30", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto41", "date": "2026-09-30", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto42", "date": "2026-10-01", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto43", "date": "2026-10-01", "title": "Ingeniería Térmica", "start": "11:10", "end": "14:00", "type": "practica", "group": "3", "subject": "s1", "room": "LAB"}, {"id": "auto44", "date": "2026-10-02", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto45", "date": "2026-10-02", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto46", "date": "2026-10-02", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto47", "date": "2026-10-05", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto48", "date": "2026-10-05", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto49", "date": "2026-10-05", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto50", "date": "2026-10-05", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s3", "room": "INF"}, {"id": "auto51", "date": "2026-10-06", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto52", "date": "2026-10-06", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto53", "date": "2026-10-06", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto54", "date": "2026-10-06", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s3", "room": "INF"}, {"id": "auto55", "date": "2026-10-06", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto56", "date": "2026-10-07", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto57", "date": "2026-10-07", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "examen", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto58", "date": "2026-10-07", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto59", "date": "2026-10-07", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s3", "room": "INF"}, {"id": "auto60", "date": "2026-10-07", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto61", "date": "2026-10-08", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto62", "date": "2026-10-08", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto63", "date": "2026-10-08", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto64", "date": "2026-10-13", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto65", "date": "2026-10-13", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto66", "date": "2026-10-13", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto67", "date": "2026-10-13", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s1", "room": "INF"}, {"id": "auto68", "date": "2026-10-13", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto69", "date": "2026-10-14", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto70", "date": "2026-10-14", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto71", "date": "2026-10-14", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto72", "date": "2026-10-14", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s1", "room": "INF"}, {"id": "auto73", "date": "2026-10-14", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto74", "date": "2026-10-15", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto75", "date": "2026-10-15", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto76", "date": "2026-10-15", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto77", "date": "2026-10-15", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s1", "room": "INF"}, {"id": "auto78", "date": "2026-10-16", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto79", "date": "2026-10-16", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto80", "date": "2026-10-19", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto81", "date": "2026-10-19", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto82", "date": "2026-10-19", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto83", "date": "2026-10-19", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "LAB"}, {"id": "auto84", "date": "2026-10-20", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto85", "date": "2026-10-20", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto86", "date": "2026-10-20", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto87", "date": "2026-10-20", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "LAB"}, {"id": "auto88", "date": "2026-10-21", "title": "Ingeniería Térmica", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto89", "date": "2026-10-21", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto90", "date": "2026-10-21", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto91", "date": "2026-10-21", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto92", "date": "2026-10-21", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto93", "date": "2026-10-22", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto94", "date": "2026-10-22", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto95", "date": "2026-10-22", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s1", "room": "INF"}, {"id": "auto96", "date": "2026-10-22", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s3", "room": "INF"}, {"id": "auto97", "date": "2026-10-23", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "practica", "group": "3", "subject": "s3", "room": "INF"}, {"id": "auto98", "date": "2026-10-23", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto99", "date": "2026-10-23", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s1", "room": "INF"}, {"id": "auto100", "date": "2026-10-23", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s3", "room": "INF"}, {"id": "auto101", "date": "2026-10-26", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto102", "date": "2026-10-26", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto103", "date": "2026-10-26", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto104", "date": "2026-10-26", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "LAB"}, {"id": "auto105", "date": "2026-10-26", "title": "Tecnología de Máquinas", "start": "16:00", "end": "19:00", "type": "examen", "group": null, "subject": "s3", "room": ""}, {"id": "auto106", "date": "2026-10-27", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto107", "date": "2026-10-27", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto108", "date": "2026-10-27", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto109", "date": "2026-10-27", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "LAB"}, {"id": "auto110", "date": "2026-10-27", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto111", "date": "2026-10-28", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto112", "date": "2026-10-28", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto113", "date": "2026-10-28", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto114", "date": "2026-10-28", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto115", "date": "2026-10-28", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto116", "date": "2026-10-29", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto117", "date": "2026-10-29", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto118", "date": "2026-10-29", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto119", "date": "2026-10-30", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto120", "date": "2026-10-30", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto121", "date": "2026-10-30", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s1", "room": "INF"}, {"id": "auto122", "date": "2026-10-30", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s3", "room": "INF"}, {"id": "auto123", "date": "2026-11-02", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto124", "date": "2026-11-02", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto125", "date": "2026-11-02", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto126", "date": "2026-11-02", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "LAB"}, {"id": "auto127", "date": "2026-11-03", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "examen", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto128", "date": "2026-11-03", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto129", "date": "2026-11-03", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto130", "date": "2026-11-03", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "LAB"}, {"id": "auto131", "date": "2026-11-03", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto132", "date": "2026-11-04", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto133", "date": "2026-11-04", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto134", "date": "2026-11-04", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto135", "date": "2026-11-04", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto136", "date": "2026-11-04", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto137", "date": "2026-11-05", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto138", "date": "2026-11-05", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto139", "date": "2026-11-05", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s3", "room": "INF"}, {"id": "auto140", "date": "2026-11-06", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto141", "date": "2026-11-06", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto142", "date": "2026-11-06", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto143", "date": "2026-11-06", "title": "Ingeniería Térmica", "start": "16:00", "end": "18:00", "type": "examen", "group": null, "subject": "s1", "room": ""}, {"id": "auto144", "date": "2026-11-09", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto145", "date": "2026-11-09", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto146", "date": "2026-11-09", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto147", "date": "2026-11-09", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "LAB"}, {"id": "auto148", "date": "2026-11-10", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto149", "date": "2026-11-10", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto150", "date": "2026-11-10", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto151", "date": "2026-11-10", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "LAB"}, {"id": "auto152", "date": "2026-11-11", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto153", "date": "2026-11-11", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto154", "date": "2026-11-11", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto155", "date": "2026-11-11", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto156", "date": "2026-11-11", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto157", "date": "2026-11-12", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto158", "date": "2026-11-12", "title": "Ingeniería Térmica", "start": "11:10", "end": "14:00", "type": "practica", "group": "1", "subject": "s1", "room": "LAB"}, {"id": "auto159", "date": "2026-11-13", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto160", "date": "2026-11-13", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto161", "date": "2026-11-13", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s1", "room": "INF"}, {"id": "auto162", "date": "2026-11-13", "title": "Tecnología de Máquinas", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s3", "room": "INF"}, {"id": "auto163", "date": "2026-11-16", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto164", "date": "2026-11-16", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto165", "date": "2026-11-16", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto166", "date": "2026-11-16", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "LAB"}, {"id": "auto167", "date": "2026-11-17", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto168", "date": "2026-11-17", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto169", "date": "2026-11-17", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto170", "date": "2026-11-17", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "LAB"}, {"id": "auto171", "date": "2026-11-18", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto172", "date": "2026-11-18", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto173", "date": "2026-11-18", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto174", "date": "2026-11-18", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto175", "date": "2026-11-18", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto176", "date": "2026-11-19", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto177", "date": "2026-11-19", "title": "Ingeniería Térmica", "start": "11:10", "end": "14:00", "type": "practica", "group": "3", "subject": "s1", "room": "LAB"}, {"id": "auto178", "date": "2026-11-20", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto179", "date": "2026-11-20", "title": "Ingeniería Térmica", "start": "11:10", "end": "14:00", "type": "practica", "group": "2", "subject": "s1", "room": "LAB"}, {"id": "auto180", "date": "2026-11-23", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto181", "date": "2026-11-23", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto182", "date": "2026-11-23", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto183", "date": "2026-11-23", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "LAB"}, {"id": "auto184", "date": "2026-11-24", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto185", "date": "2026-11-24", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "2", "subject": "s2", "room": "INF"}, {"id": "auto186", "date": "2026-11-24", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto187", "date": "2026-11-24", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "LAB"}, {"id": "auto188", "date": "2026-11-25", "title": "Tecnología de Fabricación", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s5", "room": "ETSII#PS13"}, {"id": "auto189", "date": "2026-11-25", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto190", "date": "2026-11-25", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto191", "date": "2026-11-25", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto192", "date": "2026-11-26", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto193", "date": "2026-11-26", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto194", "date": "2026-11-27", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto195", "date": "2026-11-27", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto196", "date": "2026-11-30", "title": "Automatización Industrial", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto197", "date": "2026-11-30", "title": "Tecnología de Máquinas", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto198", "date": "2026-11-30", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto199", "date": "2026-11-30", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "INF"}, {"id": "auto200", "date": "2026-12-01", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s2", "room": "INF"}, {"id": "auto201", "date": "2026-12-01", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto202", "date": "2026-12-01", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "INF"}, {"id": "auto203", "date": "2026-12-01", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto204", "date": "2026-12-02", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto205", "date": "2026-12-02", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto206", "date": "2026-12-02", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto207", "date": "2026-12-02", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto208", "date": "2026-12-02", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto209", "date": "2026-12-03", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto210", "date": "2026-12-03", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto211", "date": "2026-12-03", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto212", "date": "2026-12-04", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto213", "date": "2026-12-04", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto214", "date": "2026-12-04", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s1", "room": "INF"}, {"id": "auto215", "date": "2026-12-09", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "practica", "group": "2", "subject": "s2", "room": "INF"}, {"id": "auto216", "date": "2026-12-09", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "examen", "group": "1", "subject": "s4", "room": "LAB"}, {"id": "auto217", "date": "2026-12-09", "title": "Tecnología de Materiales", "start": "11:10", "end": "13:00", "type": "practica", "group": "3", "subject": "s2", "room": "LAB"}, {"id": "auto218", "date": "2026-12-09", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "examen", "group": "2", "subject": "s4", "room": "LAB"}, {"id": "auto219", "date": "2026-12-09", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "INF"}, {"id": "auto220", "date": "2026-12-10", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto221", "date": "2026-12-10", "title": "Automatización Industrial", "start": "11:10", "end": "13:00", "type": "examen", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto222", "date": "2026-12-10", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "examen", "group": "3", "subject": "s4", "room": "LAB"}, {"id": "auto223", "date": "2026-12-10", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "2", "subject": "s2", "room": "INF"}, {"id": "auto224", "date": "2026-12-11", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto225", "date": "2026-12-11", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto226", "date": "2026-12-11", "title": "Tecnología de Materiales", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s2", "room": "INF"}, {"id": "auto227", "date": "2026-12-14", "title": "Tecnología de Máquinas", "start": "09:00", "end": "10:50", "type": "clase", "group": null, "subject": "s3", "room": "ETSII#PS13"}, {"id": "auto228", "date": "2026-12-14", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto229", "date": "2026-12-14", "title": "Automatización Industrial", "start": "13:10", "end": "15:00", "type": "clase", "group": null, "subject": "s4", "room": "ETSII#PS13"}, {"id": "auto230", "date": "2026-12-15", "title": "Ingeniería Térmica", "start": "09:00", "end": "10:50", "type": "practica", "group": "2", "subject": "s1", "room": "INF"}, {"id": "auto231", "date": "2026-12-15", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "clase", "group": null, "subject": "s1", "room": "ETSII#PS13"}, {"id": "auto232", "date": "2026-12-15", "title": "Ingeniería Térmica", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s1", "room": "INF"}, {"id": "auto233", "date": "2026-12-15", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "4", "subject": "s5", "room": "LAB"}, {"id": "auto234", "date": "2026-12-16", "title": "Ingeniería Térmica", "start": "09:00", "end": "10:50", "type": "practica", "group": "3", "subject": "s1", "room": "INF"}, {"id": "auto235", "date": "2026-12-16", "title": "Ingeniería Térmica", "start": "11:10", "end": "13:00", "type": "practica", "group": "1", "subject": "s1", "room": "INF"}, {"id": "auto236", "date": "2026-12-16", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "1", "subject": "s5", "room": "LAB"}, {"id": "auto237", "date": "2026-12-16", "title": "Tecnología de Fabricación", "start": "16:00", "end": "18:00", "type": "practica", "group": "2", "subject": "s5", "room": "LAB"}, {"id": "auto238", "date": "2026-12-17", "title": "Tecnología de Materiales", "start": "09:00", "end": "10:50", "type": "examen", "group": null, "subject": "s2", "room": "ETSII#PS13"}, {"id": "auto239", "date": "2026-12-17", "title": "Tecnología de Fabricación", "start": "13:10", "end": "15:00", "type": "practica", "group": "3", "subject": "s5", "room": "LAB"}, {"id": "auto240", "date": "2026-12-22", "title": "Ingeniería Térmica", "start": "09:00", "end": "10:50", "type": "examen", "group": null, "subject": "s1", "room": "ETSII#PS13"}];
 </script>
